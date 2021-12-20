@@ -1,0 +1,254 @@
+:root {
+  --header-height: 89.19px;
+  --color-bg: rgb(244, 244, 255);
+  --footer-color-font: rgb(142, 142, 192);
+  --light-font: 100;
+  --normal-font: 400;
+  --medium-font: 600;
+  --bold-font: 800;
+  --padding-base: 16px;
+  --logo-font-size: 2rem;
+  --white-color: rgb(241, 241, 241);
+  --black-color: rgb(36, 41, 46);
+  --primary-color: #6366f1;
+  --primary-color-gradient-derivate: #818cf8;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/fonts/Ubuntu-Light.ttf") format("truetype");
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/fonts/Ubuntu-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/fonts/Ubuntu-Medium.ttf") format("truetype");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/fonts/Ubuntu-Bold.ttf") format("truetype");
+  font-weight: 800;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg);
+  font-family: "Ubuntu", sans-serif;
+  color: var(--black-color);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--padding-base) 0;
+}
+
+header .logo {
+  display: block;
+  font-weight: var(--medium-font);
+  font-size: var(--logo-font-size);
+  letter-spacing: -1px;
+  transition: 0.2s;
+}
+
+header .logo:hover {
+  opacity: 0.6;
+}
+
+header ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+header ul li a {
+  display: block;
+  padding: var(--padding-base);
+  font-size: 1.05rem;
+  font-weight: var(--medium-font);
+  text-decoration: none;
+  color: var(--black-color);
+  position: relative;
+  z-index: 1;
+}
+
+header ul li a:before {
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  transform: translateX(-50%);
+  content: "";
+  height: 2px;
+  background: linear-gradient(
+    45deg,
+    var(--primary-color),
+    var(--primary-color-gradient-derivate)
+  );
+  animation-fill-mode: none;
+  z-index: -1;
+}
+
+header ul li a:hover {
+  color: var(--white-color);
+  transition: 1s;
+}
+
+header ul li a:hover:before {
+  animation: underline 0.4s forwards;
+  width: 80%;
+  height: 80%;
+}
+
+.text--primary {
+  color: var(--primary-color);
+}
+
+header ul li a.twitter:before {
+  background: linear-gradient(45deg, #1da1f2, #86caf5);
+}
+
+header ul li a.github:before {
+  background: linear-gradient(45deg, #333, rgb(99, 99, 99));
+}
+
+header ul li a.instagram:before {
+  background: linear-gradient(
+    45deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%
+  );
+}
+
+@keyframes underline {
+  0% {
+    width: 0;
+    height: 2px;
+  }
+  50% {
+    width: 80%;
+    height: 2px;
+  }
+  100% {
+    height: 80%;
+  }
+}
+
+main {
+  min-height: calc(100vh - var(--header-height) - 32px);
+  padding-bottom: 32px;
+}
+
+footer {
+  padding: calc(var(--padding-base) * 4) var(--padding-base);
+  color: var(--footer-color-font);
+}
+
+footer h2 {
+  font-weight: var(--medium-font);
+  text-align: center;
+  font-size: 1rem;
+}
+
+.postThumb {
+  padding-bottom: var(--padding-base);
+}
+
+.postThumb div .button {
+  display: block;
+  color: var(--primary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  font-weight: var(--medium-font);
+  z-index: 1;
+  transition: 0s;
+  position: relative;
+}
+
+.postThumb div .button:before {
+  content: " ";
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  background: linear-gradient(
+    45deg,
+    var(--primary-color),
+    var(--primary-color-gradient-derivate)
+  );
+  z-index: -1;
+}
+
+.postThumb:hover div .button {
+  transition: 1s;
+  color: var(--white-color);
+}
+
+.postThumb:hover div .button:before {
+  animation: fullfill 0.4s forwards;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes fullfill {
+  0% {
+    width: 2px;
+    height: 0;
+  }
+  50% {
+    width: 2px;
+    height: 100%;
+  }
+  100% {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.postThumb .button svg {
+  margin-top: 0.5px;
+}
+
+.postThumb .footer {
+  margin-top: var(--padding-base);
+}
+
+.postThumb .details {
+  padding: calc(var(--padding-base) / 4) calc(var(--padding-base) / 2);
+  font-weight: var(--medium-font);
+  color: rgb(185, 185, 185);
+}
+
+.tag {
+  display: inline-block;
+  transition: 0.2s;
+}
+
+.tag.hoverable:hover,
+.tag.hoverable.active {
+  background-color: var(--tag-bg-color);
+  color: var(--white-color);
+}
+
+.tag.hoverable:hover .tag-hashtag,
+.tag.hoverable.active .tag-hashtag {
+  color: var(--white-color) !important;
+}
