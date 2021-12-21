@@ -5,7 +5,7 @@
 [dev]
   functions = "netlify/functions"
   publish = "public"
-  port = 3000
+  port = 3001
 
 [[redirects]]
   from = "/*"

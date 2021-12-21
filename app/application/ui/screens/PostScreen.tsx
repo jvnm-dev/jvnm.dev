@@ -1,10 +1,10 @@
-import dayjs from "dayjs";
-
 import { TagList } from "~/application/ui/components/blog/TagList";
 import { Container } from "~/application/ui/components/common/Container";
 import { Typography } from "~/application/ui/components/common/Typography";
 
 import { Post } from "~/domain/post/post";
+
+import { formatDate } from "~/lib/date";
 
 interface IOwnProps {
   post: Post;
@@ -27,8 +27,7 @@ export const PostScreen = ({ post }: IOwnProps) => {
           level={3}
           className="mt-2 text-gray-400 font-normal"
         >
-          Published on {dayjs(post.published_at).format("MMM DD, YYYY")} by{" "}
-          {post.user.name}
+          Published on {formatDate(post.published_at)} by {post.user.name}
         </Typography>
 
         <TagList posts={[post]} filterable={false} className="mb-4 mt-4" />

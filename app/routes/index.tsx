@@ -15,7 +15,7 @@ export let meta: MetaFunction = () => ({
 
 export let loader: LoaderFunction = async () => usePostsQuery().run();
 
-export const Index = () => {
+const Index = () => {
   const { getFilteredPosts } = useGetFilteredPosts();
   const posts = useLoaderData<Post[]>();
   const filteredPost = getFilteredPosts(posts);
