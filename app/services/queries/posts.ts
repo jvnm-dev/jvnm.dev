@@ -1,6 +1,6 @@
-import { Post } from "~/domain/post/post";
+import { Post } from "~/domain/post";
 
-import { API_ENDPOINTS, authorizedFetch } from "~/services/api";
+import { DEV_TO_API_ENDPOINTS, devToFetch } from "~/services/api";
 
 export type PostsQuery = {
   run: () => Promise<Post[]>;
@@ -8,8 +8,8 @@ export type PostsQuery = {
 
 export const usePostsQuery = (): PostsQuery => {
   const fetchPosts = async (): Promise<Post[]> => {
-    const posts = await authorizedFetch({
-      endpoint: API_ENDPOINTS.posts,
+    const posts = await devToFetch({
+      endpoint: DEV_TO_API_ENDPOINTS.posts,
     });
 
     if (!posts.ok) {

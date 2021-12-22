@@ -4,33 +4,37 @@ import { Container } from "~/application/ui/components/common/Container";
 import { Typography } from "~/application/ui/components/common/Typography";
 import { PostThumbsGrid } from "~/application/ui/components/blog/PostThumbsGrid";
 
-import { Post } from "~/domain/post/post";
+import { Post } from "~/domain/post";
 
 interface IOwnProps {
   posts: Post[];
 }
 
-export const HomeScreen = ({ posts }: IOwnProps) => {
+export const BlogScreen = ({ posts }: IOwnProps) => {
   const Posts = posts?.length ? <PostThumbsGrid posts={posts} /> : <NoPost />;
 
   return (
     <Container>
       <div className="grid gap-4 grid-cols-2 my-20">
         <div className="flex flex-col justify-center">
-          <Typography variant="title" level={1}>
+          <Typography
+            variant="title"
+            level={1}
+            className="text-8xl font-bold dark:text-slate-100"
+          >
             Welcome to my blog!
           </Typography>
           <Typography
             variant="title"
             level={2}
-            className="mt-8"
+            className="mt-8 dark:text-slate-100"
             style={{ width: 500 }}
           >
             Learn and stay tuned about web development, React, and more.
           </Typography>
           <Typography
             variant="title"
-            level={2}
+            level={1}
             className="mt-8 text-indigo-300"
           >
             Find my latests posts below.
@@ -40,11 +44,19 @@ export const HomeScreen = ({ posts }: IOwnProps) => {
           <img src="/images/blog.svg" alt="welcome" style={{ width: 500 }} />
         </div>
       </div>
-      <Typography variant="title" level={2} className="mb-4">
+      <Typography
+        variant="title"
+        level={2}
+        className="mb-4 dark:text-slate-100"
+      >
         Lastest Posts
       </Typography>
       <div className="flex mb-4 items-center">
-        <Typography variant="title" level={3} className="font-normal">
+        <Typography
+          variant="title"
+          level={3}
+          className="font-normal dark:text-slate-100"
+        >
           Filters
         </Typography>
         <TagList posts={posts} className="ml-4" />

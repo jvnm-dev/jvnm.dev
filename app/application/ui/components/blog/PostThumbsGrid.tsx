@@ -1,4 +1,4 @@
-import { Post } from "~/domain/post/post";
+import { Post } from "~/domain/post";
 
 import { PostThumb } from "~/application/ui/components/blog/PostThumb";
 

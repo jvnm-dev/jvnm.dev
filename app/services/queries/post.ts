@@ -1,6 +1,6 @@
-import { Post } from "~/domain/post/post";
+import { Post } from "~/domain/post";
 
-import { API_ENDPOINTS, authorizedFetch } from "~/services/api";
+import { DEV_TO_API_ENDPOINTS, devToFetch } from "~/services/api";
 
 export type PostQuery = {
   run: () => Promise<Post>;
@@ -12,8 +12,8 @@ type Params = {
 
 export const usePostQuery = ({ slug }: Params): PostQuery => {
   const fetchPost = async (): Promise<Post> => {
-    const post = await authorizedFetch({
-      endpoint: API_ENDPOINTS.post(slug),
+    const post = await devToFetch({
+      endpoint: DEV_TO_API_ENDPOINTS.post(slug),
     });
 
     if (!post.ok) {

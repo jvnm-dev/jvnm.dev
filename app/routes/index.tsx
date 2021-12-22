@@ -1,11 +1,11 @@
 import type { MetaFunction, LoaderFunction } from "remix";
 import { useLoaderData } from "remix";
 
-import { Post } from "~/domain/post/post";
+import { Post } from "~/domain/post";
 
 import { usePostsQuery } from "~/services/queries/posts";
 
-import { HomeScreen } from "~/application/ui/screens/HomeScreen";
+import { BlogScreen } from "~/application/ui/screens/BlogScreen";
 import { useGetFilteredPosts } from "~/application/cases/posts/getFilteredPosts";
 
 export let meta: MetaFunction = () => ({
@@ -20,7 +20,7 @@ const Index = () => {
   const posts = useLoaderData<Post[]>();
   const filteredPost = getFilteredPosts(posts);
 
-  return <HomeScreen posts={filteredPost} />;
+  return <BlogScreen posts={filteredPost} />;
 };
 
 export default Index;

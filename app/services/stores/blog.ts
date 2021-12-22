@@ -1,19 +1,21 @@
+import create from "zustand";
 import { devtools } from "zustand/middleware";
-import create, { GetState, SetState, StoreApi } from "zustand";
 
-type BlogState = {
+import { ICommonStore, prepareStore } from "~/services/stores/common";
+
+type BlogState = ICommonStore & {
   filter: string[];
-  setFilter: (filter: string[]) => void;
 };
 
-export const useBlogStore = create<
-  BlogState,
-  SetState<BlogState>,
-  GetState<BlogState>,
-  StoreApi<BlogState>
->(
-  devtools((set) => ({
-    filter: [],
-    setFilter: (filter: string[]) => set((state) => ({ ...state, filter })),
-  }))
+const defaultValue = {
+  filter: [],
+};
+
+const name = "jvnm.dev-blog";
+const store = prepareStore<BlogState>({ defaultValue });
+
+export const useBlogStore = create<BlogState>(
+  devtools(store, {
+    name,
+  })
 );

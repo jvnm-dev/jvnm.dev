@@ -1,10 +1,12 @@
 import { useBlogStore } from "~/services/stores/blog";
 
 export const useUpdatePostsFilter = () => {
-  const { filter, setFilter } = useBlogStore(({ filter, setFilter }) => ({
-    filter,
-    setFilter,
-  }));
+  const { filter, update: updateBlogStore } = useBlogStore(
+    ({ filter, update }) => ({
+      filter,
+      update,
+    })
+  );
 
   const extractTagName = (tag: string) => tag.replace("#", "");
 
@@ -17,9 +19,13 @@ export const useUpdatePostsFilter = () => {
 
     if (tag) {
       if (filter.includes(tag)) {
-        setFilter(filter.filter((t) => t !== tag));
+        updateBlogStore({
+          filter: filter.filter((t) => t !== tag),
+        });
       } else {
-        setFilter([...filter, tag]);
+        updateBlogStore({
+          filter: [...filter, tag],
+        });
       }
     }
   };

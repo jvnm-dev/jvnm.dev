@@ -103,6 +103,19 @@ code {
   border-radius: 16px;
 }
 
-pre code {
+.dark code {
+  background-color: #0e0c1d;
+}
+
+pre code,
+.dark pre code {
   background: none;
+}
+
+a:not(.navLink) {
+  color: var(--primary-color);
+}
+
+a:not(.navLink):hover {
+  text-decoration: underline;
 }

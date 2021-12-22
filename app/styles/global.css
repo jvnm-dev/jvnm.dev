@@ -1,7 +1,6 @@
 :root {
   --header-height: 89.19px;
   --color-bg: rgb(244, 244, 255);
-  --footer-color-font: rgb(142, 142, 192);
   --light-font: 100;
   --normal-font: 400;
   --medium-font: 600;
@@ -38,13 +37,50 @@
   font-weight: 800;
 }
 
+.background {
+  background-image: url("/images/background.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-bg);
   font-family: "Ubuntu", sans-serif;
   color: var(--black-color);
+}
+
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0.5rem;
+}
+
+.loading-bar:after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0.5rem;
+}
+
+@keyframes loading {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.loading-bar.active:after {
+  background-color: var(--primary-color);
+  animation: loading 2s linear infinite;
 }
 
 header {
@@ -66,14 +102,16 @@ header .logo:hover {
   opacity: 0.6;
 }
 
-header ul {
+header ul,
+footer ul {
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-header ul li a {
+header ul li a,
+footer ul li a {
   display: block;
   padding: var(--padding-base);
   font-size: 1.05rem;
@@ -84,7 +122,12 @@ header ul li a {
   z-index: 1;
 }
 
-header ul li a:before {
+.dark header ul li a {
+  color: var(--white-color);
+}
+
+header ul li a:before,
+footer ul li a:before {
   position: absolute;
   left: 50%;
   bottom: 5px;
@@ -100,13 +143,15 @@ header ul li a:before {
   z-index: -1;
 }
 
-header ul li a:hover {
+header ul li a:hover,
+footer ul li a:hover {
   color: var(--white-color);
   transition: 1s;
 }
 
-header ul li a:hover:before {
-  animation: underline 0.4s forwards;
+header ul li a:hover:before,
+footer ul li a:hover:before {
+  animation: buttonHovered 0.5s forwards;
   width: 80%;
   height: 80%;
 }
@@ -115,15 +160,15 @@ header ul li a:hover:before {
   color: var(--primary-color);
 }
 
-header ul li a.twitter:before {
+footer ul li a.twitter:before {
   background: linear-gradient(45deg, #1da1f2, #86caf5);
 }
 
-header ul li a.github:before {
+footer ul li a.github:before {
   background: linear-gradient(45deg, #333, rgb(99, 99, 99));
 }
 
-header ul li a.instagram:before {
+footer ul li a.instagram:before {
   background: linear-gradient(
     45deg,
     #f09433 0%,
@@ -134,7 +179,7 @@ header ul li a.instagram:before {
   );
 }
 
-@keyframes underline {
+@keyframes buttonHovered {
   0% {
     width: 0;
     height: 2px;
@@ -153,11 +198,6 @@ main {
   padding-bottom: 32px;
 }
 
-footer {
-  padding: calc(var(--padding-base) * 4) var(--padding-base);
-  color: var(--footer-color-font);
-}
-
 footer h2 {
   font-weight: var(--medium-font);
   text-align: center;
@@ -168,7 +208,7 @@ footer h2 {
   padding-bottom: var(--padding-base);
 }
 
-.postThumb div .button {
+.button {
   display: block;
   color: var(--primary-color);
   display: flex;
@@ -181,7 +221,7 @@ footer h2 {
   position: relative;
 }
 
-.postThumb div .button:before {
+.button:before {
   content: " ";
   position: absolute;
   left: 0px;
@@ -197,12 +237,12 @@ footer h2 {
   z-index: -1;
 }
 
-.postThumb:hover div .button {
+.hoverableButton:hover div .button {
   transition: 1s;
   color: var(--white-color);
 }
 
-.postThumb:hover div .button:before {
+.hoverableButton:hover div .button:before {
   animation: fullfill 0.4s forwards;
   width: 100%;
   height: 100%;
@@ -238,7 +278,6 @@ footer h2 {
 }
 
 .tag {
-  display: inline-block;
   transition: 0.2s;
 }
 
@@ -251,4 +290,9 @@ footer h2 {
 .tag.hoverable:hover .tag-hashtag,
 .tag.hoverable.active .tag-hashtag {
   color: var(--white-color) !important;
+}
+
+.experience-button:before {
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }

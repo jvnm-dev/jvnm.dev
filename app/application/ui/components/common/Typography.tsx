@@ -17,18 +17,37 @@ export const Typography: React.FC<IOwnProps> = ({
   level,
   children,
 }) => {
-  const classes = classNames(className, {
-    "text-4xl": ["title", "subtitle"].includes(variant) && level === 1,
-    "text-3xl": ["title", "subtitle"].includes(variant) && level === 2,
-    "text-2xl": ["title", "subtitle"].includes(variant) && level === 3,
-    "text-xl": ["title", "subtitle"].includes(variant) && level === 4,
-    "text-lg": ["title", "subtitle"].includes(variant) && level === 5,
-    "text-md":
-      (["title", "subtitle"].includes(variant) && level === 6) ||
-      variant === "text",
-    "font-semibold": ["semibold"].includes(variant),
-    "font-bold": ["bold"].includes(variant),
-  });
+  const textSizeDefined =
+    className?.includes("text-md") ||
+    className?.includes("text-lg") ||
+    className?.includes("text-xl") ||
+    className?.includes("text-2xl") ||
+    className?.includes("text-3xl") ||
+    className?.includes("text-4xl") ||
+    className?.includes("text-5xl") ||
+    className?.includes("text-6xl") ||
+    className?.includes("text-7xl") ||
+    className?.includes("text-8xl") ||
+    className?.includes("text-9xl");
+
+  const fontWeightDefined = className?.includes("font-");
+
+  const isTitle = ["title", "subtitle"].includes(variant);
+  const isText = ["text"].includes(variant);
+
+  const classes = classNames(
+    {
+      "text-4xl": isTitle && level === 1 && !textSizeDefined,
+      "text-3xl": isTitle && level === 2 && !textSizeDefined,
+      "text-2xl": isTitle && level === 3 && !textSizeDefined,
+      "text-xl": isTitle && level === 4 && !textSizeDefined,
+      "text-lg": isTitle && level === 5 && !textSizeDefined,
+      "text-md": ((isTitle && level === 6) || isText) && !textSizeDefined,
+      "font-semibold": ["semibold"].includes(variant) && !fontWeightDefined,
+      "font-bold": ["bold"].includes(variant) && !fontWeightDefined,
+    },
+    className
+  );
 
   if (["title", "subtitle"].includes(variant)) {
     if (level === 1) {

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 
-import { getPostsTags, Post } from "~/domain/post/post";
+import { getPostsTags, Post } from "~/domain/post";
 
 import { Tag } from "~/application/ui/components/blog/Tag";
 import { useUpdatePostsFilter } from "~/application/cases/posts/updatePostsFilter";
@@ -19,7 +19,7 @@ export const TagList = ({ posts, className, filterable = true }: IOwnProps) => {
     updateFilter(event.currentTarget.textContent);
 
   return (
-    <div className={classNames(className, "font-semibold")}>
+    <div className={classNames(className, "font-semibold flex")}>
       {tags?.map((value) => {
         const isActive = filter.includes(value);
 

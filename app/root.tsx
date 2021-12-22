@@ -1,33 +1,40 @@
 import {
+  ActionFunction,
   Links,
   LiveReload,
+  LoaderFunction,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
   useCatch,
+  useLoaderData,
+  useTransition,
 } from "remix";
 import type { LinksFunction } from "remix";
+import classNames from "classnames";
 
-import { Header } from "./application/ui/components/common/Header";
-import { Container } from "./application/ui/components/common/Container";
+import { Header } from "~/application/ui/components/common/Header";
+import { Footer } from "~/application/ui/components/common/Footer";
+import { Container } from "~/application/ui/components/common/Container";
+import { Typography } from "~/application/ui/components/common/Typography";
+
+import { userPreferences } from "~/services/cookies/userPreferences";
 
 import tailwindStylesUrl from "~/styles/tailwind.css";
-import backgroundStylesUrl from "~/styles/background.css";
 import globalStylesUrl from "~/styles/global.css";
-import darkStylesUrl from "~/styles/dark.css";
-import { Typography } from "./application/ui/components/common/Typography";
 
 export let links: LinksFunction = () => {
   return [
-    { rel: "stylesheet", href: tailwindStylesUrl },
-    { rel: "stylesheet", href: backgroundStylesUrl },
-    { rel: "stylesheet", href: globalStylesUrl },
     {
-      rel: "stylesheet",
-      href: darkStylesUrl,
-      media: "(prefers-color-scheme: dark)",
+      rel: "preload",
+      href: "/images/background.svg",
+      as: "image",
+      type: "image/svg+xml",
     },
+    { rel: "stylesheet", href: tailwindStylesUrl },
+    { rel: "stylesheet", href: globalStylesUrl },
   ];
 };
 
@@ -47,7 +54,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
   return (
     <Document title="Error!">
       <Layout>
-        <div>
+        <Container>
           <h1>There was an error</h1>
           <Typography>{error.message}</Typography>
           <hr />
@@ -55,7 +62,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
             Hey, developer, you should replace this with what you want your
             users to see.
           </Typography>
-        </div>
+        </Container>
       </Layout>
     </Document>
   );
@@ -98,15 +105,46 @@ export function CatchBoundary() {
   );
 }
 
-function Document({
+export const loader: LoaderFunction = async ({ request }) => {
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie = (await userPreferences.parse(cookieHeader)) || {};
+
+  return { darkModeEnabled: cookie.darkModeEnabled };
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie = (await userPreferences.parse(cookieHeader)) || {};
+  const bodyParams = await request.formData();
+
+  cookie.darkModeEnabled = Boolean(
+    bodyParams.get("darkModeEnabled") === "true"
+  );
+
+  return redirect(bodyParams.get("destination")?.toString() ?? "/", {
+    headers: {
+      "Set-Cookie": await userPreferences.serialize(cookie),
+    },
+  });
+};
+
+export const Document = ({
   children,
   title,
 }: {
   children: React.ReactNode;
   title?: string;
-}) {
+}) => {
+  const { darkModeEnabled } = useLoaderData();
+  const { state } = useTransition();
+
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={classNames({
+        dark: darkModeEnabled,
+      })}
+    >
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -114,7 +152,12 @@ function Document({
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className={classNames("bg-slate-100 dark:bg-slate-900")}>
+        <div
+          className={classNames("loading-bar", {
+            active: state === "loading",
+          })}
+        />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -122,22 +165,16 @@ function Document({
       </body>
     </html>
   );
-}
+};
 
-function Layout({ children }: { children: React.ReactNode }) {
+export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="background">
       <Header />
 
       <main>{children}</main>
 
-      <footer>
-        <Container>
-          <h2>
-            All rights reserved © Jason Van Malder {new Date().getFullYear()}
-          </h2>
-        </Container>
-      </footer>
+      <Footer />
     </div>
   );
-}
+};

@@ -1,4 +1,4 @@
-import { getPostTags, Post } from "~/domain/post/post";
+import { getPostTags, Post } from "~/domain/post";
 
 import { useBlogStore } from "~/services/stores/blog";
 

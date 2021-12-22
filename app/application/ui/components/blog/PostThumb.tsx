@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { Link } from "remix";
 import { FaArrowRight } from "react-icons/fa";
 
-import { Post } from "~/domain/post/post";
+import { Post } from "~/domain/post";
 
 import { Typography } from "~/application/ui/components/common/Typography";
 
@@ -18,6 +18,7 @@ export const PostThumb = ({ className, post }: IOwnProps) => {
   const linkClasses = [
     className,
     "postThumb",
+    "hoverableButton",
     "flex",
     "flex-col",
     "justify-between",
@@ -29,10 +30,15 @@ export const PostThumb = ({ className, post }: IOwnProps) => {
     "hover:border-indigo-500 border-transparent border-2",
     "transition ease-in-out duration-1000",
     "select-none",
+    "dark:bg-slate-900 dark:text-slate-100 dark:shadow-indigo-500/50",
   ];
 
   return (
-    <Link to={`/posts/${post.slug}`} className={classNames(...linkClasses)}>
+    <Link
+      to={`/posts/${post.slug}`}
+      className={classNames(...linkClasses)}
+      prefetch="intent"
+    >
       <img src={post.cover_image} alt="" className="cover rounded-xl w-full" />
       <div className="flex justify-between items-center">
         <h2 className="mt-4 font-semibold">

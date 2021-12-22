@@ -2,16 +2,17 @@ import {
   LinksFunction,
   LoaderFunction,
   MetaFunction,
+  useCatch,
   useLoaderData,
 } from "remix";
 
 import { usePostQuery } from "~/services/queries/post";
 
-import { PostScreen } from "~/application/ui/screens/PostScreen";
 import { definedOrRedirect } from "~/application/remix/http";
 import { componentCss, link } from "~/application/remix/styling";
+import { PostScreen } from "~/application/ui/screens/PostScreen";
 
-import { Post } from "~/domain/post/post";
+import { Post } from "~/domain/post";
 
 import stylesUrl from "~/styles/post.css";
 import highlightStylesUrl from "~/styles/highlight.css";
@@ -27,12 +28,12 @@ export const loader: LoaderFunction = async ({ params }) => {
   return usePostQuery({ slug }).run();
 };
 
-export let meta: MetaFunction = ({ data }) => {
+export const meta: MetaFunction = ({ data }) => {
   const post: Post = data;
 
   return {
-    title: `${post.title} - Jason Van Malder`,
-    description: post.description,
+    title: `${post?.title} - Jason Van Malder`,
+    description: post?.description,
   };
 };
 
