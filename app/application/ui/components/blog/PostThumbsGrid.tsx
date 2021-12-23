@@ -9,7 +9,7 @@ interface IOwnProps {
 export const PostThumbsGrid = ({ posts }: IOwnProps) => {
   return (
     <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-      {[...posts, ...posts, ...posts]?.map((post) => (
+      {[...posts]?.map((post) => (
         <PostThumb key={`post-${post.id}-${post.title}`} post={post} />
       ))}
     </div>
