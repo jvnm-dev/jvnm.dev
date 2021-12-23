@@ -14,7 +14,7 @@ export const Jumbotron = () => {
         <Typography
           variant="title"
           level={3}
-          className="mt-8 leading-8 text-gray-500 dark:text-slate-300"
+          className="mt-8 leading-8 text-gray-500 dark:text-slate-100"
           style={{ width: 550 }}
         >
           In consultancy at{" "}

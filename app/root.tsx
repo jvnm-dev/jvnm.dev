@@ -19,8 +19,10 @@ import { Header } from "~/application/ui/components/common/Header";
 import { Footer } from "~/application/ui/components/common/Footer";
 import { Container } from "~/application/ui/components/common/Container";
 import { Typography } from "~/application/ui/components/common/Typography";
+import { useGetSettingsFromRequest } from "~/application/cases/cookieSettings/getSettingsFromRequest";
+import { useSetSettingsAndRedirect } from "~/application/cases/cookieSettings/setSettingsAndRedirect";
 
-import { userPreferences } from "~/services/cookies/userPreferences";
+import { CookieSettings } from "~/domain/cookieSettings";
 
 import tailwindStylesUrl from "~/styles/tailwind.css";
 import globalStylesUrl from "~/styles/global.css";
@@ -106,26 +108,13 @@ export function CatchBoundary() {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const cookieHeader = request.headers.get("Cookie");
-  const cookie = (await userPreferences.parse(cookieHeader)) || {};
-
-  return { darkModeEnabled: cookie.darkModeEnabled };
+  const { getSettingsFromRequest } = useGetSettingsFromRequest();
+  return getSettingsFromRequest(request);
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const cookieHeader = request.headers.get("Cookie");
-  const cookie = (await userPreferences.parse(cookieHeader)) || {};
-  const bodyParams = await request.formData();
-
-  cookie.darkModeEnabled = Boolean(
-    bodyParams.get("darkModeEnabled") === "true"
-  );
-
-  return redirect(bodyParams.get("destination")?.toString() ?? "/", {
-    headers: {
-      "Set-Cookie": await userPreferences.serialize(cookie),
-    },
-  });
+  const { setSettingsAndRedirect } = useSetSettingsAndRedirect();
+  return setSettingsAndRedirect(request);
 };
 
 export const Document = ({
@@ -135,7 +124,7 @@ export const Document = ({
   children: React.ReactNode;
   title?: string;
 }) => {
-  const { darkModeEnabled } = useLoaderData();
+  const { darkModeEnabled } = useLoaderData<CookieSettings>();
   const { state } = useTransition();
 
   return (

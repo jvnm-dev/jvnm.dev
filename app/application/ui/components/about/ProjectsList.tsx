@@ -13,7 +13,10 @@ export const ProjectsList = ({ developments }: IOwnProps) => {
     <div className="grid grid-cols-2 gap-4">
       {developments.map((development) => {
         return (
-          <div className="mb-4 bg-white bg-opacity-50 rounded-lg shadow-lg hover:bg-opacity-100 transition ease-in-out duration-500 dark:bg-slate-900 dark:text-slate-100 dark:shadow-indigo-500/25">
+          <div
+            key={`${development.name}`}
+            className="mb-4 bg-white bg-opacity-50 rounded-lg shadow-lg hover:bg-opacity-100 transition ease-in-out duration-500 dark:bg-slate-900 dark:text-slate-100 dark:shadow-indigo-500/25"
+          >
             <div className="flex items-center h-full">
               <img
                 src={development.image}

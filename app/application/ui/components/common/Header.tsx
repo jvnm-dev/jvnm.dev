@@ -1,21 +1,19 @@
-import { useEffect } from "react";
 import classNames from "classnames";
 import { Form, Link, LoaderFunction, useLoaderData, useLocation } from "remix";
 import { FaMoon, FaSun } from "react-icons/fa";
 
-import { Container } from "~/application/ui/components/common/Container";
+import { CookieSettings } from "~/domain/cookieSettings";
 
-import { userPreferences } from "~/services/cookies/userPreferences";
+import { Container } from "~/application/ui/components/common/Container";
+import { useGetSettingsFromRequest } from "~/application/cases/cookieSettings/getSettingsFromRequest";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const cookieHeader = request.headers.get("Cookie");
-  const cookie = (await userPreferences.parse(cookieHeader)) || {};
-
-  return { darkModeEnabled: cookie.darkModeEnabled };
+  const { getSettingsFromRequest } = useGetSettingsFromRequest();
+  return getSettingsFromRequest(request);
 };
 
 export const Header = () => {
-  const { darkModeEnabled } = useLoaderData();
+  const { darkModeEnabled } = useLoaderData<CookieSettings>();
   const location = useLocation();
 
   return (
