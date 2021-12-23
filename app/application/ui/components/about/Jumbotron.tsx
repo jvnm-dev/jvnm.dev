@@ -32,7 +32,7 @@ export const Jumbotron = () => {
       </div>
 
       <div className="flex justify-center items-center">
-        <img src="/images/about.svg" alt="welcome" />
+        <img src="/images/about.svg" alt="about" className="h-96" />
       </div>
     </div>
   );
