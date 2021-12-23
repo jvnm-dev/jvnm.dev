@@ -15,7 +15,7 @@ export const ExperiencesList = ({ experiences }: IOwnProps) => {
   const { getExperienceLink } = useGetExperienceLink();
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {experiences.map((experience) => (
         <a
           key={experience.id}

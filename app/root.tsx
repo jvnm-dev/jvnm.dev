@@ -5,7 +5,6 @@ import {
   LoaderFunction,
   Meta,
   Outlet,
-  redirect,
   Scripts,
   ScrollRestoration,
   useCatch,

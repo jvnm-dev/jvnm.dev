@@ -19,7 +19,7 @@ export const Tag = ({ isActive, value, hoverable, onClick }: IOwnProps) => {
   return (
     <span
       className={classNames(
-        "tag flex items-center justify-center select-none px-2 py-[2px] border-2 rounded-xl mr-2 shadow-lg font-semibold dark:text-slate-100",
+        "tag flex items-center justify-center select-none px-2 py-[2px] border-2 rounded-xl mr-2 mb-2 shadow-lg font-semibold dark:text-slate-100",
         {
           active: isActive,
           "cursor-pointer": hoverable,

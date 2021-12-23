@@ -10,7 +10,7 @@ interface IOwnProps {
 
 export const ProjectsList = ({ developments }: IOwnProps) => {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
       {developments.map((development) => {
         return (
           <div
@@ -21,7 +21,7 @@ export const ProjectsList = ({ developments }: IOwnProps) => {
               <img
                 src={development.image}
                 alt={development.name}
-                className="h-48 rounded-l-lg shadow-md"
+                className="h-32 lg:h-48 rounded-l-lg shadow-md"
               />
               <div className="m-4">
                 <Typography

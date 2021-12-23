@@ -1,13 +1,16 @@
+import { useMediaQuery } from "react-responsive";
 import { Typography } from "~/application/ui/components/common/Typography";
 
 export const Jumbotron = () => {
+  const shouldShowImage = useMediaQuery({ minWidth: 769 });
+
   return (
-    <div className="grid gap-4 grid-cols-2 my-20">
+    <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 my-20">
       <div className="flex flex-col justify-center">
         <Typography
           variant="title"
           level={1}
-          className="text-8xl font-bold dark:text-slate-100"
+          className="font-bold dark:text-slate-100 text-7xl xl:text-8xl"
         >
           Welcome to my blog!
         </Typography>
@@ -23,9 +26,16 @@ export const Jumbotron = () => {
           Find my latests posts below.
         </Typography>
       </div>
-      <div className="flex justify-center items-center">
-        <img src="/images/blog.svg" alt="welcome" className="h-96" />
-      </div>
+      {shouldShowImage && (
+        <div
+          className="justify-center items-center hidden"
+          style={{
+            display: shouldShowImage ? "flex" : "none",
+          }}
+        >
+          <img src="/images/blog.svg" alt="welcome" className="h-96" />
+        </div>
+      )}
     </div>
   );
 };

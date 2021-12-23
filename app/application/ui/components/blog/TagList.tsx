@@ -19,7 +19,7 @@ export const TagList = ({ posts, className, filterable = true }: IOwnProps) => {
     updateFilter(event.currentTarget.textContent);
 
   return (
-    <div className={classNames(className, "font-semibold flex")}>
+    <div className={classNames(className, "font-semibold flex flex-wrap")}>
       {tags?.map((value) => {
         const isActive = filter.includes(value);
 

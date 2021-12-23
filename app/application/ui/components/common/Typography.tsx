@@ -37,12 +37,18 @@ export const Typography: React.FC<IOwnProps> = ({
 
   const classes = classNames(
     {
-      "text-4xl": isTitle && level === 1 && !textSizeDefined,
-      "text-3xl": isTitle && level === 2 && !textSizeDefined,
-      "text-2xl": isTitle && level === 3 && !textSizeDefined,
-      "text-xl": isTitle && level === 4 && !textSizeDefined,
-      "text-lg": isTitle && level === 5 && !textSizeDefined,
-      "text-md": ((isTitle && level === 6) || isText) && !textSizeDefined,
+      "sm:text-2xl lg:text-3xl xl:text-4xl":
+        isTitle && level === 1 && !textSizeDefined,
+      "sm:text-xl lg:text-2xl xl:text-3xl":
+        isTitle && level === 2 && !textSizeDefined,
+      "sm:text-lg lg:text-xl xl:text-2xl":
+        isTitle && level === 3 && !textSizeDefined,
+      "sm:text-md lg:text-lg xl:text-xl":
+        isTitle && level === 4 && !textSizeDefined,
+      "sm:text-sm lg:text-md xl:text-lg":
+        isTitle && level === 5 && !textSizeDefined,
+      "sm:text-xs lg:text-sm xl:text-md":
+        ((isTitle && level === 6) || isText) && !textSizeDefined,
       "font-semibold": ["semibold"].includes(variant) && !fontWeightDefined,
       "font-bold": ["bold"].includes(variant) && !fontWeightDefined,
     },
