@@ -2,8 +2,8 @@ import { useMediaQuery } from "react-responsive";
 import { Typography } from "~/application/ui/components/common/Typography";
 
 export const Jumbotron = () => {
-  const isLargeDevice = useMediaQuery({ minWidth: 1024 });
-  const shouldShowImage = useMediaQuery({ minWidth: 769 });
+  const isLargeDevice = useMediaQuery({ minWidth: 1280 });
+  const shouldShowImage = useMediaQuery({ minWidth: 1025 });
 
   return (
     <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 my-20">
