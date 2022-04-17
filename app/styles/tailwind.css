@@ -484,6 +484,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   }
 }
 
+.absolute {
+  position: absolute;
+}
+
 .m-4 {
   margin: 1rem;
 }

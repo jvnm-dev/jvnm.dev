@@ -6,6 +6,7 @@ import { Container } from "~/application/ui/components/common/Container";
 import { Typography } from "~/application/ui/components/common/Typography";
 import { ProjectsList } from "~/application/ui/components/about/ProjectsList";
 import { ExperiencesList } from "~/application/ui/components/about/ExperiencesList";
+import { useVisitor } from "~/application/cases/visitors/useVisitors";
 
 interface IOwnProps {
   experiences: Experience[];
@@ -13,6 +14,8 @@ interface IOwnProps {
 }
 
 export const AboutScreen = ({ experiences, developments }: IOwnProps) => {
+  useVisitor();
+
   return (
     <Container>
       <Jumbotron />
