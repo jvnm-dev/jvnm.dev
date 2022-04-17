@@ -1,5 +1,6 @@
 import { TagList } from "~/application/ui/components/blog/TagList";
 import { Container } from "~/application/ui/components/common/Container";
+import { useVisitor } from "~/application/cases/visitors/useVisitors";
 import { Typography } from "~/application/ui/components/common/Typography";
 
 import { Post } from "~/domain/post";
@@ -11,6 +12,8 @@ interface IOwnProps {
 }
 
 export const PostScreen = ({ post }: IOwnProps) => {
+  useVisitor();
+
   return (
     <Container>
       <div className="bg-white shadow-lg dark:bg-slate-900 dark:text-slate-100 dark:shadow-indigo-500/50 rounded-lg">

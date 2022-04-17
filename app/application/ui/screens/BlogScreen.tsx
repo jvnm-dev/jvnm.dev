@@ -2,6 +2,7 @@ import { NoPost } from "~/application/ui/components/blog/NoPost";
 import { TagList } from "~/application/ui/components/blog/TagList";
 import { Jumbotron } from "~/application/ui/components/blog/Jumbotron";
 import { Container } from "~/application/ui/components/common/Container";
+import { useVisitor } from "~/application/cases/visitors/useVisitors";
 import { Typography } from "~/application/ui/components/common/Typography";
 import { PostThumbsGrid } from "~/application/ui/components/blog/PostThumbsGrid";
 
@@ -12,6 +13,8 @@ interface IOwnProps {
 }
 
 export const BlogScreen = ({ posts }: IOwnProps) => {
+  useVisitor();
+
   const Posts = posts?.length ? <PostThumbsGrid posts={posts} /> : <NoPost />;
 
   return (
