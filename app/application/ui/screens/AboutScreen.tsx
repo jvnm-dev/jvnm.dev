@@ -14,8 +14,6 @@ interface IOwnProps {
 }
 
 export const AboutScreen = ({ experiences, developments }: IOwnProps) => {
-  useVisitor();
-
   return (
     <Container>
       <Jumbotron />

@@ -12,8 +12,6 @@ interface IOwnProps {
 }
 
 export const PostScreen = ({ post }: IOwnProps) => {
-  useVisitor();
-
   return (
     <Container>
       <div className="bg-white shadow-lg dark:bg-slate-900 dark:text-slate-100 dark:shadow-indigo-500/50 rounded-lg">

@@ -3,4 +3,6 @@ export type Visitor = {
   x: number;
   y: number;
   color: string;
+  name: string;
+  location: string;
 };

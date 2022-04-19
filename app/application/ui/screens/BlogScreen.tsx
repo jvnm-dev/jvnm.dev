@@ -13,8 +13,6 @@ interface IOwnProps {
 }
 
 export const BlogScreen = ({ posts }: IOwnProps) => {
-  useVisitor();
-
   const Posts = posts?.length ? <PostThumbsGrid posts={posts} /> : <NoPost />;
 
   return (

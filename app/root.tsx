@@ -25,6 +25,7 @@ import { CookieSettings } from "~/domain/cookieSettings";
 
 import tailwindStylesUrl from "~/styles/tailwind.css";
 import globalStylesUrl from "~/styles/global.css";
+import { useVisitor } from "./application/cases/visitors/useVisitors";
 
 export let links: LinksFunction = () => {
   return [
@@ -125,6 +126,9 @@ export const Document = ({
 }) => {
   const { darkModeEnabled } = useLoaderData<CookieSettings>();
   const { state } = useTransition();
+
+  // Display visitors mouse cursor on the screen and get tooltip to show on hover
+  const tooltip = useVisitor();
 
   return (
     <html
