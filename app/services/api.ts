@@ -4,7 +4,7 @@ interface IFetchParams {
   endpoint: string;
 }
 
-export const API_URL = "http://localhost:3000/";
+export const API_URL = "https://jvnm.dev/";
 export const DEV_TO_API_URL = "https://dev.to/api";
 
 export const devToFetch = ({ endpoint }: IFetchParams) => {
