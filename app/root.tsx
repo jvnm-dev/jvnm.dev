@@ -8,7 +8,6 @@ import {
   Scripts,
   ScrollRestoration,
   useCatch,
-  useLoaderData,
   useTransition,
 } from "remix";
 import type { LinksFunction } from "remix";
@@ -21,11 +20,16 @@ import { Typography } from "~/application/ui/components/common/Typography";
 import { useGetSettingsFromRequest } from "~/application/cases/cookieSettings/getSettingsFromRequest";
 import { useSetSettingsAndRedirect } from "~/application/cases/cookieSettings/setSettingsAndRedirect";
 
-import { CookieSettings } from "~/domain/cookieSettings";
+import {
+  Theme,
+  ThemeProvider,
+  useTheme,
+} from "~/services/hooks/theme-provider";
+
+import { useVisitor } from "~/application/cases/visitors/useVisitors";
 
 import tailwindStylesUrl from "~/styles/tailwind.css";
 import globalStylesUrl from "~/styles/global.css";
-import { useVisitor } from "./application/cases/visitors/useVisitors";
 
 export let links: LinksFunction = () => {
   return [
@@ -42,11 +46,13 @@ export let links: LinksFunction = () => {
 
 export default function App() {
   return (
-    <Document>
-      <Layout>
-        <Outlet />
-      </Layout>
-    </Document>
+    <ThemeProvider>
+      <Document>
+        <Layout>
+          <Outlet />
+        </Layout>
+      </Document>
+    </ThemeProvider>
   );
 }
 
@@ -61,8 +67,8 @@ export function ErrorBoundary({ error }: { error: Error }) {
           <Typography>{error.message}</Typography>
           <hr />
           <Typography>
-            Hey, developer, you should replace this with what you want your
-            users to see.
+            Please contact me by{" "}
+            <a href="mailto:jasonvanmalder@gmail.com">email</a>
           </Typography>
         </Container>
       </Layout>
@@ -124,17 +130,17 @@ export const Document = ({
   children: React.ReactNode;
   title?: string;
 }) => {
-  const { darkModeEnabled } = useLoaderData<CookieSettings>();
+  // const [theme] = useTheme();
   const { state } = useTransition();
 
   // Display visitors mouse cursor on the screen and get tooltip to show on hover
-  const tooltip = useVisitor();
+  useVisitor();
 
   return (
     <html
       lang="en"
       className={classNames({
-        dark: darkModeEnabled,
+        // dark: theme === Theme.DARK,
       })}
     >
       <head>

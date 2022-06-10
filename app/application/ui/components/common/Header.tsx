@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import { Form, Link, LoaderFunction, useLoaderData, useLocation } from "remix";
+import { Link, LoaderFunction } from "remix";
 import { FaMoon, FaSun } from "react-icons/fa";
 
-import { CookieSettings } from "~/domain/cookieSettings";
+import { Theme, useTheme } from "~/services/hooks/theme-provider";
 
 import { Container } from "~/application/ui/components/common/Container";
 import { useGetSettingsFromRequest } from "~/application/cases/cookieSettings/getSettingsFromRequest";
@@ -13,8 +13,16 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const Header = () => {
-  const { darkModeEnabled } = useLoaderData<CookieSettings>();
-  const location = useLocation();
+  // const [theme, setTheme] = useTheme();
+
+  const onThemeSwitchClick = () => {
+    // setTheme((previousTheme: Theme | null) => {
+    //   if (previousTheme === Theme.LIGHT) {
+    //     return Theme.DARK;
+    //   }
+    //   return Theme.LIGHT;
+    // });
+  };
 
   return (
     <Container>
@@ -44,26 +52,20 @@ export const Header = () => {
             </li>
           </ul>
         </nav>
-        <Form method="post">
-          <input
-            type="hidden"
-            name="darkModeEnabled"
-            value={String(!darkModeEnabled)}
-          />
-          <input type="hidden" name="destination" value={location.pathname} />
-          <button
-            className={classNames(
-              "cursor-pointer flex items-center align-center p-2 rounded-full hover:scale-125 transition duration-300 select-none",
-              {
-                "bg-slate-800 text-white": !darkModeEnabled,
-                "bg-slate-100": darkModeEnabled,
-              }
-            )}
-            type="submit"
-          >
-            {darkModeEnabled ? <FaSun /> : <FaMoon />}
-          </button>
-        </Form>
+        <div></div>
+        {/* <button
+          className={classNames(
+            "cursor-pointer flex items-center align-center p-2 rounded-full hover:scale-125 transition duration-300 select-none",
+            {
+              "bg-slate-800 text-white": theme === Theme.LIGHT,
+              "bg-slate-100": theme === Theme.DARK,
+            }
+          )}
+          type="submit"
+          onClick={onThemeSwitchClick}
+        >
+          {theme === Theme.DARK ? <FaSun /> : <FaMoon />}
+        </button> */}
       </header>
     </Container>
   );
