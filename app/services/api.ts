@@ -4,7 +4,7 @@ interface IFetchParams {
   endpoint: string;
 }
 
-export const API_URL = "https://jvnmhub.xyz/";
+export const API_URL = "http://127.0.0.1:8080/";
 export const DEV_TO_API_URL = "https://dev.to/api";
 
 export const devToFetch = ({ endpoint }: IFetchParams) => {
