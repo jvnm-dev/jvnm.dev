@@ -6,11 +6,9 @@ services:
         ports:
             - '3000:3000'
         networks:
-            app:
+            api_network:
                 ipv4_address: 172.20.128.1
 
 networks:
-    app:
-        ipam:
-            config:
-                - subnet: 172.20.0.0/16
+    api_network:
+        external: true
