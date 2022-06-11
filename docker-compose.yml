@@ -6,9 +6,9 @@ services:
         ports:
             - '3000:3000'
         networks:
-            api_network:
+            jvnmdev-api_network:
                 ipv4_address: 172.20.128.1
 
 networks:
-    api_network:
+    jvnmdev-api_network:
         external: true
