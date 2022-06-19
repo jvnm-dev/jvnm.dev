@@ -135,7 +135,9 @@ export const useVisitor = () => {
     socketToUpdate?.emit("update", payload);
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setSocket(io(API_URL));
+  }, []);
 
   useEffect(() => {
     update(socket, me);
