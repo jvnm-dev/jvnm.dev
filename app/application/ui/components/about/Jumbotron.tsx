@@ -24,7 +24,7 @@ export const Jumbotron = () => {
           In consultancy at{" "}
           <a
             href="https://www.haulogy.net/"
-            className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-400"
+            className="font-bold text-transparent bg-clip-text bg-gradient-to-br from-haulogy-blue via-haulogy-purple to-haulogy-orange"
             target="_blank"
             rel="noopener noreferrer"
           >

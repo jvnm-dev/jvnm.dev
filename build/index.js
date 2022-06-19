@@ -576,28 +576,6 @@ function ThemeProvider({ children }) {
 init_react();
 var import_react2 = require("react");
 var import_remix5 = __toESM(require_remix());
-var import_socket = __toESM(require("socket.io-client"));
-
-// app/services/api.ts
-init_react();
-var import_graphql_request = require("graphql-request");
-var API_URL = "https://jvnmhub.xyz/";
-var DEV_TO_API_URL = "https://dev.to/api";
-var devToFetch = ({ endpoint }) => {
-  var _a;
-  return fetch(`${DEV_TO_API_URL}${endpoint}`, {
-    headers: {
-      api_key: (_a = process == null ? void 0 : process.env) == null ? void 0 : _a.DEV_TO_API_KEY
-    }
-  });
-};
-var DEV_TO_API_ENDPOINTS = {
-  posts: "/articles/me/published",
-  post: (slug) => `/articles/jvnm_dev/${slug}`
-};
-var useAPIClient = () => {
-  return new import_graphql_request.GraphQLClient(`${API_URL}graphql`);
-};
 
 // app/lib/function.ts
 init_react();
@@ -720,7 +698,6 @@ var useVisitor = () => {
     socketToUpdate == null ? void 0 : socketToUpdate.emit("update", payload);
   };
   (0, import_react2.useEffect)(() => {
-    setSocket((0, import_socket.default)(API_URL));
   }, []);
   (0, import_react2.useEffect)(() => {
     update(socket, me);
@@ -772,7 +749,7 @@ var useVisitor = () => {
 };
 
 // app/styles/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-WALEKPNE.css";
+var tailwind_default = "/build/_assets/tailwind-KK5M6ZK5.css";
 
 // app/styles/global.css
 var global_default = "/build/_assets/global-TC3CIVYE.css";
@@ -846,7 +823,7 @@ var Document = ({
     className: (0, import_classnames3.default)("loading-bar", {
       active: state === "loading"
     })
-  }), children, /* @__PURE__ */ React.createElement(import_remix6.ScrollRestoration, null), /* @__PURE__ */ React.createElement(import_remix6.Scripts, null), false));
+  }), children, /* @__PURE__ */ React.createElement(import_remix6.ScrollRestoration, null), /* @__PURE__ */ React.createElement(import_remix6.Scripts, null), /* @__PURE__ */ React.createElement(import_remix6.LiveReload, null)));
 };
 var Layout = ({ children }) => {
   return /* @__PURE__ */ React.createElement("div", {
@@ -867,6 +844,29 @@ var import_remix8 = __toESM(require_remix());
 
 // app/services/queries/post.ts
 init_react();
+
+// app/services/api.ts
+init_react();
+var import_graphql_request = require("graphql-request");
+var API_URL = "http://127.0.0.1:8080/";
+var DEV_TO_API_URL = "https://dev.to/api";
+var devToFetch = ({ endpoint }) => {
+  var _a;
+  return fetch(`${DEV_TO_API_URL}${endpoint}`, {
+    headers: {
+      api_key: (_a = process == null ? void 0 : process.env) == null ? void 0 : _a.DEV_TO_API_KEY
+    }
+  });
+};
+var DEV_TO_API_ENDPOINTS = {
+  posts: "/articles/me/published",
+  post: (slug) => `/articles/jvnm_dev/${slug}`
+};
+var useAPIClient = () => {
+  return new import_graphql_request.GraphQLClient(`${API_URL}graphql`);
+};
+
+// app/services/queries/post.ts
 var usePostQuery = ({ slug }) => {
   const fetchPost = async () => {
     const post = await devToFetch({
@@ -1117,7 +1117,7 @@ var Jumbotron = () => {
     style: { width: isLargeDevice ? 550 : 400 }
   }, "In consultancy at", " ", /* @__PURE__ */ React.createElement("a", {
     href: "https://www.haulogy.net/",
-    className: "font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-400",
+    className: "font-bold text-transparent bg-clip-text bg-gradient-to-br from-haulogy-blue via-haulogy-purple to-haulogy-orange",
     target: "_blank",
     rel: "noopener noreferrer"
   }, "Haulogy"), ", a company that offers IT solutions both to Distribution Network Managers and energy suppliers.")), shouldShowImage && /* @__PURE__ */ React.createElement("div", {
@@ -1182,36 +1182,15 @@ var ProjectsList = ({ developments }) => {
 // app/application/ui/components/about/ExperiencesList.tsx
 init_react();
 var import_fa3 = require("react-icons/fa");
-
-// app/application/cases/experiences/getExperienceLink.ts
-init_react();
-var useGetExperienceLink = () => {
-  const getExperienceLink = (experience) => {
-    switch (experience.place.toLowerCase()) {
-      case "heh":
-        return "https://heh.be";
-      case "shippr":
-        return "https://shippr.io";
-      case "odoo":
-        return "https://odoo.com";
-      case "extia":
-        return "https://extia.fr";
-    }
-  };
-  return { getExperienceLink };
-};
-
-// app/application/ui/components/about/ExperiencesList.tsx
 var ExperiencesList = ({ experiences }) => {
-  const { getExperienceLink } = useGetExperienceLink();
   return /* @__PURE__ */ React.createElement("div", {
     className: "grid grid-cols-1 lg:grid-cols-2 gap-4"
   }, experiences.map((experience) => /* @__PURE__ */ React.createElement("a", {
     key: experience.id,
-    href: getExperienceLink(experience),
+    href: experience.url,
     target: "_blank",
     rel: "noopener noreferrer",
-    className: "mb-4 bg-white bg-opacity-50 rounded-lg shadow-lg hover:bg-opacity-100 transition ease-in-out duration-500 hoverableButton cursor-pointer dark:bg-slate-900 dark:text-slate-100 dark:shadow-indigo-500/25"
+    className: "relative mb-4 bg-white bg-opacity-50 rounded-lg shadow-lg hover:bg-opacity-100 transition ease-in-out duration-500 hoverableButton cursor-pointer dark:bg-slate-900 dark:text-slate-100 dark:shadow-indigo-500/25"
   }, /* @__PURE__ */ React.createElement("div", {
     className: "flex items-center h-full"
   }, /* @__PURE__ */ React.createElement("img", {
@@ -1228,7 +1207,11 @@ var ExperiencesList = ({ experiences }) => {
     className: "flex-1 flex justify-end h-full"
   }, /* @__PURE__ */ React.createElement("span", {
     className: "cursor-pointer button px-4 h-full rounded-r-lg experience-button"
-  }, /* @__PURE__ */ React.createElement(import_fa3.FaArrowRight, null)))))));
+  }, /* @__PURE__ */ React.createElement(import_fa3.FaArrowRight, null))), experience.isExtiaConsulting && /* @__PURE__ */ React.createElement("div", {
+    className: "absolute flex-1 flex bottom-0 left-[50%] bg-gradient-to-br translate-x-[-50%] from-[#ED7003] to-[#EF7E02] rounded-tl-lg rounded-tr-lg text-sm pl-4 pr-4"
+  }, /* @__PURE__ */ React.createElement("span", {
+    className: "text-white"
+  }, "Extia consulting"))))));
 };
 
 // app/application/ui/screens/AboutScreen.tsx
@@ -1263,6 +1246,8 @@ var GET_EXPERIENCES = import_graphql_request2.gql`
       dateFrom
       dateTo
       role
+      url
+      isExtiaConsulting
       journey {
         id
       }
@@ -1319,9 +1304,7 @@ var useGetSortedExperiences = () => {
       return [];
     }
     return experiences.sort((a, b) => {
-      const dateA = new Date(a.dateFrom);
-      const dateB = new Date(b.dateFrom);
-      return dateB.getTime() - dateA.getTime();
+      return Number(b.id) - Number(a.id);
     });
   };
   return { getSortedExperiences };
@@ -1550,7 +1533,7 @@ var routes_default = Index;
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
 init_react();
-var assets_manifest_default = { "version": "5f842efe", "entry": { "module": "/build/entry.client-SA2INB47.js", "imports": ["/build/_shared/chunk-TSKN632W.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-V4YCIE76.js", "imports": ["/build/_shared/chunk-ESK5OOC4.js", "/build/_shared/chunk-O6N7CA7O.js", "/build/_shared/chunk-UPRUL4SI.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": true, "hasErrorBoundary": true }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-IS5UPMR2.js", "imports": ["/build/_shared/chunk-UTSXTBMI.js", "/build/_shared/chunk-5WEYB7AZ.js", "/build/_shared/chunk-XOABCFJP.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-ULGXSV2M.js", "imports": ["/build/_shared/chunk-QO5XX23R.js", "/build/_shared/chunk-5WEYB7AZ.js", "/build/_shared/chunk-XOABCFJP.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/posts/$slug": { "id": "routes/posts/$slug", "parentId": "root", "path": "posts/:slug", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/posts/$slug-ZLG7TTWN.js", "imports": ["/build/_shared/chunk-UTSXTBMI.js", "/build/_shared/chunk-QO5XX23R.js", "/build/_shared/chunk-XOABCFJP.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-5F842EFE.js" };
+var assets_manifest_default = { "version": "c929586e", "entry": { "module": "/build/entry.client-LSKF77AT.js", "imports": ["/build/_shared/chunk-VLAIHFUW.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-NK7IFIXO.js", "imports": ["/build/_shared/chunk-WO4SYSXH.js", "/build/_shared/chunk-KNQC2NRO.js", "/build/_shared/chunk-2LAJHPB6.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": true, "hasErrorBoundary": true }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-MUKWFAR4.js", "imports": ["/build/_shared/chunk-C3ZKNRUB.js", "/build/_shared/chunk-CME2V3QE.js", "/build/_shared/chunk-PZ75QARJ.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-A3GAUGJU.js", "imports": ["/build/_shared/chunk-NO7OMRWX.js", "/build/_shared/chunk-CME2V3QE.js", "/build/_shared/chunk-PZ75QARJ.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/posts/$slug": { "id": "routes/posts/$slug", "parentId": "root", "path": "posts/:slug", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/posts/$slug-Z7USNJTJ.js", "imports": ["/build/_shared/chunk-C3ZKNRUB.js", "/build/_shared/chunk-NO7OMRWX.js", "/build/_shared/chunk-PZ75QARJ.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-C929586E.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };
@@ -1625,3 +1608,4 @@ module.exports = __toCommonJS(stdin_exports);
  *
  * @license MIT
  */
+//# sourceMappingURL=index.js.map

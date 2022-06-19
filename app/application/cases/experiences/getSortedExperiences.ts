@@ -7,10 +7,7 @@ export const useGetSortedExperiences = () => {
     }
 
     return experiences.sort((a, b) => {
-      const dateA = new Date(a.dateFrom);
-      const dateB = new Date(b.dateFrom);
-
-      return dateB.getTime() - dateA.getTime();
+      return Number(b.id) - Number(a.id);
     });
   };
 

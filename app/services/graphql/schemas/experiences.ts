@@ -9,6 +9,8 @@ export const GET_EXPERIENCES = gql`
       dateFrom
       dateTo
       role
+      url
+      isExtiaConsulting
       journey {
         id
       }

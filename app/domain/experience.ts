@@ -5,6 +5,8 @@ export type Experience = {
   dateFrom: string;
   dateTo: string;
   role: string;
+  url: string;
+  isExtiaConsulting: boolean;
   journey: {
     id: string;
   };

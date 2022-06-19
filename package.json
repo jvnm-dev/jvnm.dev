@@ -7,9 +7,9 @@
     "build": "npm run build:css && remix build",
     "build:css": "tailwindcss -o ./app/styles/tailwind.css",
     "postinstall": "remix setup node",
-    "dev": "concurrently \"npm run dev:css\" \"npm run dev:netlify\" \"npm run dev:remix\"",
+    "dev": "concurrently \"npm run dev:css\" \"npm run dev:remix\"",
     "dev:css": "tailwindcss -o ./app/styles/tailwind.css --watch",
-    "dev:remix": "remix watch",
+    "dev:remix": "remix dev",
     "start": "remix-serve build"
   },
   "dependencies": {

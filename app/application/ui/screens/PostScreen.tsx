@@ -1,6 +1,5 @@
 import { TagList } from "~/application/ui/components/blog/TagList";
 import { Container } from "~/application/ui/components/common/Container";
-import { useVisitor } from "~/application/cases/visitors/useVisitors";
 import { Typography } from "~/application/ui/components/common/Typography";
 
 import { Post } from "~/domain/post";

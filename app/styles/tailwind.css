@@ -506,6 +506,18 @@ Ensure the default browser behavior of the `hidden` attribute.
   position: absolute;
 }
 
+.relative {
+  position: relative;
+}
+
+.bottom-0 {
+  bottom: 0px;
+}
+
+.left-\[50\%\] {
+  left: 50%;
+}
+
 .m-4 {
   margin: 1rem;
 }
@@ -618,6 +630,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   flex: 1 1 0%;
 }
 
+.translate-x-\[-50\%\] {
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -683,6 +700,14 @@ Ensure the default browser behavior of the `hidden` attribute.
   border-bottom-left-radius: 0.5rem;
 }
 
+.rounded-tl-lg {
+  border-top-left-radius: 0.5rem;
+}
+
+.rounded-tr-lg {
+  border-top-right-radius: 0.5rem;
+}
+
 .border-2 {
   border-width: 2px;
 }
@@ -710,17 +735,57 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 0.5;
 }
 
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
 
-.from-green-600 {
-  --tw-gradient-from: #16a34a;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(22 163 74 / 0));
+.from-haulogy-blue {
+  --tw-gradient-from: #16D5C1;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(22 213 193 / 0));
 }
 
-.to-green-400 {
-  --tw-gradient-to: #4ade80;
+.from-cyan-500 {
+  --tw-gradient-from: #06b6d4;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(6 182 212 / 0));
+}
+
+.from-\[\#FC8855\] {
+  --tw-gradient-from: #FC8855;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(252 136 85 / 0));
+}
+
+.from-\[\#fc9e76\] {
+  --tw-gradient-from: #fc9e76;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(252 158 118 / 0));
+}
+
+.from-\[\#ED7003\] {
+  --tw-gradient-from: #ED7003;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(237 112 3 / 0));
+}
+
+.via-haulogy-purple {
+  --tw-gradient-stops: var(--tw-gradient-from), #AB47BC, var(--tw-gradient-to, rgb(171 71 188 / 0));
+}
+
+.to-haulogy-orange {
+  --tw-gradient-to: #F48F5A;
+}
+
+.to-blue-500 {
+  --tw-gradient-to: #3b82f6;
+}
+
+.to-\[\#FC8855\] {
+  --tw-gradient-to: #FC8855;
+}
+
+.to-\[\#EF7E02\] {
+  --tw-gradient-to: #EF7E02;
 }
 
 .bg-clip-text {
@@ -764,6 +829,22 @@ Ensure the default browser behavior of the `hidden` attribute.
 .py-10 {
   padding-top: 2.5rem;
   padding-bottom: 2.5rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
+}
+
+.pr-4 {
+  padding-right: 1rem;
 }
 
 .text-6xl {
@@ -819,6 +900,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-9xl {
   font-size: 8rem;
   line-height: 1;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .font-normal {
