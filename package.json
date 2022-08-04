@@ -14,6 +14,7 @@
     "start": "cross-env NODE_ENV=production netlify dev"
   },
   "dependencies": {
+    "@netlify/functions": "^1.0.0",
     "@react-query-firebase/firestore": "^1.0.0-dev.7",
     "@remix-run/netlify": "^1.6.7",
     "@remix-run/node": "^1.6.7",
