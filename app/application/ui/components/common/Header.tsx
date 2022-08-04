@@ -1,5 +1,6 @@
 import classNames from "classnames";
-import { Link, LoaderFunction } from "remix";
+import { LoaderFunction } from "@remix-run/node";
+import { Link } from "@remix-run/react";
 import { FaMoon, FaSun } from "react-icons/fa";
 
 import { Theme, useTheme } from "~/services/hooks/theme-provider";
@@ -34,7 +35,7 @@ export const Header = () => {
           </span>
         </Link>
 
-        <nav>
+        {/* <nav>
           <ul>
             <li>
               <Link to="/" prefetch="intent" className="navLink select-none">
@@ -51,7 +52,7 @@ export const Header = () => {
               </Link>
             </li>
           </ul>
-        </nav>
+        </nav> */}
         <div></div>
         {/* <button
           className={classNames(

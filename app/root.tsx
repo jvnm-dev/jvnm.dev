@@ -1,16 +1,19 @@
-import {
+import type {
   ActionFunction,
+  LinksFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
+import {
   Links,
   LiveReload,
-  LoaderFunction,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useCatch,
   useTransition,
-} from "remix";
-import type { LinksFunction } from "remix";
+} from "@remix-run/react";
 import classNames from "classnames";
 
 import { Header } from "~/application/ui/components/common/Header";
@@ -20,13 +23,7 @@ import { Typography } from "~/application/ui/components/common/Typography";
 import { useGetSettingsFromRequest } from "~/application/cases/cookieSettings/getSettingsFromRequest";
 import { useSetSettingsAndRedirect } from "~/application/cases/cookieSettings/setSettingsAndRedirect";
 
-import {
-  Theme,
-  ThemeProvider,
-  useTheme,
-} from "~/services/hooks/theme-provider";
-
-import { useVisitor } from "~/application/cases/visitors/useVisitors";
+import { ThemeProvider } from "~/services/hooks/theme-provider";
 
 import tailwindStylesUrl from "~/styles/tailwind.css";
 import globalStylesUrl from "~/styles/global.css";
@@ -132,9 +129,6 @@ export const Document = ({
 }) => {
   // const [theme] = useTheme();
   const { state } = useTransition();
-
-  // Display visitors mouse cursor on the screen and get tooltip to show on hover
-  useVisitor();
 
   return (
     <html

@@ -1,7 +1,7 @@
 import { Experience } from "~/domain/experience";
+import { getCollection } from "~/services/api";
 
-import { useAPIClient } from "~/services/api";
-import { GET_EXPERIENCES } from "~/services/graphql/schemas/experiences";
+export const key = "experiences";
 
 export type ExperiencesQuery = {
   run: () => Promise<Experience[]>;
@@ -9,8 +9,7 @@ export type ExperiencesQuery = {
 
 export const useExperiencesQuery = (): ExperiencesQuery => {
   const fetchExperiences = async (): Promise<Experience[]> => {
-    const { experiences } = await useAPIClient().request(GET_EXPERIENCES);
-    return experiences;
+    return getCollection(key);
   };
 
   return {

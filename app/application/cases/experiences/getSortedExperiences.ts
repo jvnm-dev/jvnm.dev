@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Experience } from "~/domain/experience";
 
 export const useGetSortedExperiences = () => {
@@ -7,7 +8,7 @@ export const useGetSortedExperiences = () => {
     }
 
     return experiences.sort((a, b) => {
-      return Number(b.id) - Number(a.id);
+      return dayjs(b.dateFrom).diff(dayjs(a.dateFrom));
     });
   };
 

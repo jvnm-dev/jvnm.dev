@@ -15,7 +15,7 @@ export const ExperiencesList = ({ experiences }: IOwnProps) => {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {experiences.map((experience) => (
         <a
-          key={experience.id}
+          key={`${experience.place}`}
           href={experience.url}
           target="_blank"
           rel="noopener noreferrer"

@@ -1,26 +1,38 @@
-import type { MetaFunction, LoaderFunction } from "remix";
-import { useLoaderData } from "remix";
+import { LoaderFunction, MetaFunction } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
-import { Post } from "~/domain/post";
+import { Experience } from "~/domain/experience";
+import { Development } from "~/domain/development";
 
-import { usePostsQuery } from "~/services/queries/posts";
+import { AboutScreen } from "~/application/ui/screens/AboutScreen";
 
-import { BlogScreen } from "~/application/ui/screens/BlogScreen";
-import { useGetFilteredPosts } from "~/application/cases/posts/getFilteredPosts";
+import { useExperiencesQuery } from "~/services/queries/experiences";
+import { useDevelopmentsQuery } from "~/services/queries/developments";
+import { useGetSortedExperiences } from "~/application/cases/experiences/getSortedExperiences";
+
+type LoaderData = {
+  experiences: Experience[];
+  developments: Development[];
+};
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",
   description: "A blog about web development, React, and more.",
 });
 
-export let loader: LoaderFunction = async () => usePostsQuery().run();
+export let loader: LoaderFunction = async (): Promise<LoaderData> => ({
+  experiences: await useExperiencesQuery().run(),
+  developments: await useDevelopmentsQuery().run(),
+});
 
-const Index = () => {
-  const { getFilteredPosts } = useGetFilteredPosts();
-  const posts = useLoaderData<Post[]>();
-  const filteredPost = getFilteredPosts(posts);
+const About = () => {
+  const { getSortedExperiences } = useGetSortedExperiences();
+  const { experiences, developments } = useLoaderData<LoaderData>();
+  const sortedExperiences = getSortedExperiences(experiences);
 
-  return <BlogScreen posts={filteredPost} />;
+  return (
+    <AboutScreen experiences={sortedExperiences} developments={developments} />
+  );
 };
 
-export default Index;
+export default About;

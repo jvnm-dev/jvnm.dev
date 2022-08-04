@@ -1,25 +1,15 @@
-import { GraphQLClient } from "graphql-request";
+import { initializeApp } from "firebase/app";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 
-interface IFetchParams {
-  endpoint: string;
-}
+const firebase = initializeApp({
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+});
 
-export const API_URL = "http://127.0.0.1:8080/";
-export const DEV_TO_API_URL = "https://dev.to/api";
+export const firestore = getFirestore(firebase);
 
-export const devToFetch = ({ endpoint }: IFetchParams) => {
-  return fetch(`${DEV_TO_API_URL}${endpoint}`, {
-    headers: {
-      api_key: process?.env?.DEV_TO_API_KEY!,
-    },
-  });
-};
-
-export const DEV_TO_API_ENDPOINTS = {
-  posts: "/articles/me/published",
-  post: (slug: string) => `/articles/jvnm_dev/${slug}`,
-};
-
-export const useAPIClient = () => {
-  return new GraphQLClient(`${API_URL}graphql`);
+export const getCollection = async <T>(key: string): Promise<T[]> => {
+  const querySnapshot = await getDocs(collection(firestore, key));
+  return querySnapshot.docs.map((doc) => doc.data() as T);
 };
