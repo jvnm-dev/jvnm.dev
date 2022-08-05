@@ -18,27 +18,18 @@ var __export = (target, all) => {
   return target;
 }, __toESM = (module2, isNodeMode) => __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", !isNodeMode && module2 && module2.__esModule ? { get: () => module2.default, enumerable: !0 } : { value: module2, enumerable: !0 })), module2), __toCommonJS = /* @__PURE__ */ ((cache) => (module2, temp) => cache && cache.get(module2) || (temp = __reExport(__markAsModule({}), module2, 1), cache && cache.set(module2, temp), temp))(typeof WeakMap != "undefined" ? /* @__PURE__ */ new WeakMap() : 0);
 
-// server.js
-var server_exports = {};
-__export(server_exports, {
-  default: () => server_default
-});
-
-// node_modules/@remix-run/dev/dist/compiler/shims/react.ts
-var React = __toESM(require("react"));
-
-// server.js
-var import_vercel = require("@remix-run/vercel");
-
-// server-entry-module:@remix-run/dev/server-build
-var server_build_exports = {};
-__export(server_build_exports, {
+// <stdin>
+var stdin_exports = {};
+__export(stdin_exports, {
   assets: () => assets_manifest_default,
   assetsBuildDirectory: () => assetsBuildDirectory,
   entry: () => entry,
   publicPath: () => publicPath,
   routes: () => routes
 });
+
+// node_modules/@remix-run/dev/dist/compiler/shims/react.ts
+var React = __toESM(require("react"));
 
 // app/entry.server.tsx
 var entry_server_exports = {};
@@ -283,7 +274,7 @@ var loader = async ({ request }) => {
     className: (0, import_classnames3.default)("loading-bar", {
       active: state === "loading"
     })
-  }), children, /* @__PURE__ */ React.createElement(import_react4.ScrollRestoration, null), /* @__PURE__ */ React.createElement(import_react4.Scripts, null), !1));
+  }), children, /* @__PURE__ */ React.createElement(import_react4.ScrollRestoration, null), /* @__PURE__ */ React.createElement(import_react4.Scripts, null), /* @__PURE__ */ React.createElement(import_react4.LiveReload, null)));
 }, Layout = ({ children }) => /* @__PURE__ */ React.createElement("div", {
   className: "background"
 }, /* @__PURE__ */ React.createElement(Header, null), /* @__PURE__ */ React.createElement("main", null, children), /* @__PURE__ */ React.createElement(Footer, null));
@@ -295,13 +286,15 @@ __export(routes_exports, {
   loader: () => loader2,
   meta: () => meta
 });
-var import_react5 = require("@remix-run/react");
+var import_react6 = require("@remix-run/react");
 
 // app/application/ui/components/about/Jumbotron.tsx
-var import_react_responsive = require("react-responsive");
+var import_react5 = require("react"), import_react_responsive = require("react-responsive");
 var Jumbotron = () => {
-  let isLargeDevice = (0, import_react_responsive.useMediaQuery)({ minWidth: 1280 }), shouldShowImage = (0, import_react_responsive.useMediaQuery)({ minWidth: 1025 });
-  return /* @__PURE__ */ React.createElement("div", {
+  let isLargeDevice = (0, import_react_responsive.useMediaQuery)({ minWidth: 1280 }), shouldShowImage = (0, import_react_responsive.useMediaQuery)({ minWidth: 1025 }), [subtitleWidth, setSubtitleWidth] = (0, import_react5.useState)(0);
+  return (0, import_react5.useEffect)(() => {
+    setSubtitleWidth(isLargeDevice ? 550 : 450);
+  }, [isLargeDevice]), /* @__PURE__ */ React.createElement("div", {
     className: "grid gap-4 grid-cols-1 lg:grid-cols-2 my-20"
   }, /* @__PURE__ */ React.createElement("div", {
     className: "flex flex-col justify-center"
@@ -313,7 +306,7 @@ var Jumbotron = () => {
     variant: "title",
     level: 3,
     className: "mt-8 leading-8 text-gray-500 dark:text-slate-100",
-    style: { width: isLargeDevice ? 550 : 400 }
+    style: { width: subtitleWidth }
   }, "In consultancy at", " ", /* @__PURE__ */ React.createElement("a", {
     href: "https://www.haulogy.net/",
     className: "font-bold text-transparent bg-clip-text bg-gradient-to-br from-haulogy-blue via-haulogy-purple to-haulogy-orange",
@@ -459,7 +452,7 @@ var meta = () => ({
   experiences: await useExperiencesQuery().run(),
   developments: await useDevelopmentsQuery().run()
 }), About = () => {
-  let { getSortedExperiences } = useGetSortedExperiences(), { experiences, developments } = (0, import_react5.useLoaderData)(), sortedExperiences = getSortedExperiences(experiences);
+  let { getSortedExperiences } = useGetSortedExperiences(), { experiences, developments } = (0, import_react6.useLoaderData)(), sortedExperiences = getSortedExperiences(experiences);
   return /* @__PURE__ */ React.createElement(AboutScreen, {
     experiences: sortedExperiences,
     developments
@@ -467,7 +460,7 @@ var meta = () => ({
 }, routes_default = About;
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "921a6670", entry: { module: "/build/entry.client-VVV6AMNI.js", imports: ["/build/_shared/chunk-3Q7B64PF.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-4JOCJEDU.js", imports: ["/build/_shared/chunk-QQJBPZ7F.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-VUWTCQAW.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-921A6670.js" };
+var assets_manifest_default = { version: "b3e851e6", entry: { module: "/build/entry.client-OCUUYPZT.js", imports: ["/build/_shared/chunk-HTGVWHPS.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-TXNWNTVM.js", imports: ["/build/_shared/chunk-S53VHVCM.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-QTCELMEU.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-B3E851E6.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public/build", publicPath = "/build/", entry = { module: entry_server_exports }, routes = {
@@ -488,9 +481,13 @@ var assetsBuildDirectory = "public/build", publicPath = "/build/", entry = { mod
     module: routes_exports
   }
 };
-
-// server.js
-var server_default = (0, import_vercel.createRequestHandler)({ build: server_build_exports, mode: "production" });
-module.exports = __toCommonJS(server_exports);
+module.exports = __toCommonJS(stdin_exports);
 // Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {});
+0 && (module.exports = {
+  assets,
+  assetsBuildDirectory,
+  entry,
+  publicPath,
+  routes
+});
+//# sourceMappingURL=index.js.map

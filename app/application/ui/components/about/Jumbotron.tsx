@@ -1,9 +1,15 @@
+import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Typography } from "~/application/ui/components/common/Typography";
 
 export const Jumbotron = () => {
   const isLargeDevice = useMediaQuery({ minWidth: 1280 });
   const shouldShowImage = useMediaQuery({ minWidth: 1025 });
+  const [subtitleWidth, setSubtitleWidth] = useState(0);
+
+  useEffect(() => {
+    setSubtitleWidth(isLargeDevice ? 550 : 450);
+  }, [isLargeDevice]);
 
   return (
     <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 my-20">
@@ -19,7 +25,7 @@ export const Jumbotron = () => {
           variant="title"
           level={3}
           className="mt-8 leading-8 text-gray-500 dark:text-slate-100"
-          style={{ width: isLargeDevice ? 550 : 400 }}
+          style={{ width: subtitleWidth }}
         >
           In consultancy at{" "}
           <a
