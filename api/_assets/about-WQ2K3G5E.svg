@@ -93,7 +93,8 @@
             style="fill: rgb(230, 230, 230); transform-origin: 227.665px 329.976px;" id="elc6eirzudtcc"
             class="animable"></path>
     </g>
-    <g id="Plant--inject-2" class="animable" style="transform-origin: 96.22px 320.87px;">
+    <g id="Plant--inject-2" class="animable" style="transform-origin: 96.22px 320.87px;"
+        onclick="window.location.href='/admin'">
         <path
             d="M96.88,333s-15.22-14.87-6.56-39.77c4.85-13.95,20.94-24.2,30.1-25.16a42.92,42.92,0,0,0-7.16,12.07l-11.54,7.67,10.61-3.32-2.26,9.08s-9.86,6-11.32,7.26L109.38,298S108.56,323.72,96.88,333Z"
             style="fill: rgb(99, 102, 241); transform-origin: 104.038px 300.535px;" id="elwxa5u553ng" class="animable">

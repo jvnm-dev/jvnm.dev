@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Typography } from "~/application/ui/components/common/Typography";
+import Image from "~/application/ui/svg/about.svg";
 
 export const Jumbotron = () => {
   const isLargeDevice = useMediaQuery({ minWidth: 1280 });
@@ -39,11 +40,29 @@ export const Jumbotron = () => {
           , a company that offers IT solutions both to Distribution Network
           Managers and energy suppliers.
         </Typography>
+
+        <Typography
+          variant="title"
+          level={3}
+          className="mt-8 leading-8 text-gray-500 dark:text-slate-100"
+          style={{ width: subtitleWidth }}
+        >
+          Also studying Computer Sciences at{" "}
+          <a
+            href="https://web.umons.ac.be/fr/"
+            className="font-bold text-transparent bg-clip-text bg-gradient-to-br from-umons-red to-umons-red2"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            UMons
+          </a>
+          , to validate my skills and knowledge.
+        </Typography>
       </div>
 
       {shouldShowImage && (
         <div className="flex justify-center items-center">
-          <img src="/images/about.svg" alt="about" className="h-96" />
+          <img src="/images/about.svg" alt="about" style={{ height: "90%" }} />
         </div>
       )}
     </div>

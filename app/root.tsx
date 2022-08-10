@@ -16,8 +16,6 @@ import {
 } from "@remix-run/react";
 import classNames from "classnames";
 
-import { Header } from "~/application/ui/components/common/Header";
-import { Footer } from "~/application/ui/components/common/Footer";
 import { Container } from "~/application/ui/components/common/Container";
 import { Typography } from "~/application/ui/components/common/Typography";
 import { useGetSettingsFromRequest } from "~/application/cases/cookieSettings/getSettingsFromRequest";
@@ -161,12 +159,8 @@ export const Document = ({
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="background">
-      <Header />
-
+    <div className="background min-h-screen">
       <main>{children}</main>
-
-      <Footer />
     </div>
   );
 };

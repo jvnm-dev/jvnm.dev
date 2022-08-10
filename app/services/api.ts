@@ -1,15 +1,42 @@
-import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 
-const firebase = initializeApp({
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-});
+import cache from "~/lib/cache";
 
-export const firestore = getFirestore(firebase);
+if (getApps().length === 0) {
+  initializeApp({
+    apiKey: "AIzaSyCWqRy_mfGNqY7d74F68xtUN_rMFwNuTVY",
+    authDomain: "jvnm-dev.firebaseapp.com",
+    projectId: "jvnm-dev",
+  });
+}
 
-export const getCollection = async <T>(key: string): Promise<T[]> => {
-  const querySnapshot = await getDocs(collection(firestore, key));
-  return querySnapshot.docs.map((doc) => doc.data() as T);
+const auth = getAuth(getApp());
+const db = getFirestore(getApp());
+
+const getCollection = async <T>(name: string): Promise<T[]> => {
+  const cachedData = cache().get(name);
+
+  if (cachedData) {
+    return cachedData;
+  }
+
+  const querySnapshot = await getDocs(collection(db, name));
+
+  const data = querySnapshot.docs.map((doc) => {
+    const id = doc.id;
+    const data = doc.data();
+
+    return {
+      id: id,
+      ...data,
+    } as T;
+  });
+
+  cache().set(name, data);
+
+  return data;
 };
+
+export { auth, db, getCollection };

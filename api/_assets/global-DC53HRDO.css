@@ -194,6 +194,8 @@ footer ul li a.instagram:before {
 }
 
 main {
+  min-height: calc(100vh - var(--header-height) - 32px);
+  padding-bottom: 32px;
 }
 
 footer h2 {
