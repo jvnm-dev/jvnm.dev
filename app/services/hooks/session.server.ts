@@ -29,7 +29,9 @@ export const useSessionCommitter = async (request: Request, user: any) => {
 
     return redirect("/admin/dashboard", {
       headers: {
-        "Set-Cookie": await commitSession(session),
+        "Set-Cookie": await commitSession(session, {
+          expires: new Date(Date.now() + 60 * 60 * 24),
+        }),
       },
     });
   }

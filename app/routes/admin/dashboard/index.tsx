@@ -1,21 +1,17 @@
+import { FaPlus } from "react-icons/fa";
 import { Link, useLoaderData } from "@remix-run/react";
-import {
-  ActionArgs,
-  LoaderArgs,
-  MetaFunction,
-  redirect,
-} from "@remix-run/node";
+import { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 
-import { auth } from "~/services/api";
-import { destroySession, getSession } from "~/services/cookies/auth";
+import { formatDate } from "~/lib/date";
+
+import { Experience } from "~/domain/experience";
+
+import { useLogoutQuery } from "~/services/queries/auth";
 import { useSessionChecker } from "~/services/hooks/session.server";
+import { useExperiencesQuery } from "~/services/queries/experiences";
 
 import Sider from "~/application/ui/components/admin/Sider";
-import { useExperiencesQuery } from "~/services/queries/experiences";
-import { Experience } from "~/domain/experience";
 import { Typography } from "~/application/ui/components/common/Typography";
-import { formatDate } from "~/lib/date";
-import { FaPlus } from "react-icons/fa";
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",
@@ -23,10 +19,14 @@ export let meta: MetaFunction = () => ({
 });
 
 export async function action({ request }: ActionArgs) {
-  await auth.signOut();
-  await destroySession(await getSession(request.headers.get("Cookie")));
+  const formData = await request.formData();
 
-  return redirect("/");
+  const { run: logout } = useLogoutQuery(request);
+
+  switch (formData.get("action")) {
+    case "logout":
+      return await logout();
+  }
 }
 
 export async function loader({ request }: LoaderArgs) {

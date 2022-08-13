@@ -10,6 +10,7 @@ import { destroySession, getSession } from "~/services/cookies/auth";
 import { useSessionChecker } from "~/services/hooks/session.server";
 
 import Sider from "~/application/ui/components/admin/Sider";
+import { useLogoutQuery } from "~/services/queries/auth";
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",
@@ -17,10 +18,14 @@ export let meta: MetaFunction = () => ({
 });
 
 export async function action({ request }: ActionArgs) {
-  await auth.signOut();
-  await destroySession(await getSession(request.headers.get("Cookie")));
+  const formData = await request.formData();
 
-  return redirect("/");
+  const { run: logout } = useLogoutQuery(request);
+
+  switch (formData.get("action")) {
+    case "logout":
+      return await logout();
+  }
 }
 
 export async function loader({ request }: LoaderArgs) {

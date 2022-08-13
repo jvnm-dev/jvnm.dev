@@ -88,6 +88,8 @@ const Sider = () => {
 
       <div className="sticky inset-x-0 bottom-0 p-2 bg-white border-t border-gray-100">
         <Form method="post">
+          <input type="hidden" name="action" value="logout" />
+
           <button
             type="submit"
             className="flex justify-center w-full px-2 py-1.5 text-sm text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700 group relative"

@@ -5,4 +5,5 @@ export const userPreferences = createCookie("userPreferences", {
   secure: true,
   sameSite: true,
   maxAge: 60 * 60 * 24 * 365 * 100,
+  secrets: process.env.SECRET ? [process.env.SECRET] : [],
 });

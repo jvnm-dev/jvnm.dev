@@ -1,6 +1,6 @@
 import { getAuth } from "firebase/auth";
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { collection, getDocs, getFirestore, addDoc } from "firebase/firestore";
 
 import cache from "~/lib/cache";
 
@@ -16,7 +16,7 @@ const auth = getAuth(getApp());
 const db = getFirestore(getApp());
 
 const getCollection = async <T>(name: string): Promise<T[]> => {
-  const cachedData = cache().get(name);
+  const cachedData = cache().get<T[]>(name);
 
   if (cachedData) {
     return cachedData;
@@ -34,9 +34,17 @@ const getCollection = async <T>(name: string): Promise<T[]> => {
     } as T;
   });
 
-  cache().set(name, data);
+  cache().set<T[]>(name, data);
 
   return data;
 };
 
-export { auth, db, getCollection };
+const addDocument = async <T>(name: string, data: T): Promise<T> => {
+  await addDoc(collection(db, name), data as Record<string, any>);
+
+  cache().deleteEntry(name);
+
+  return data;
+};
+
+export { auth, db, getCollection, addDocument };

@@ -1,6 +1,5 @@
 import {
   ActionArgs,
-  createCookie,
   LoaderArgs,
   MetaFunction,
 } from "@remix-run/node";

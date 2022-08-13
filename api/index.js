@@ -152,7 +152,8 @@ var import_node = require("@remix-run/node"), userPreferences = (0, import_node.
   httpOnly: !0,
   secure: !0,
   sameSite: !0,
-  maxAge: 60 * 60 * 24 * 365 * 100
+  maxAge: 60 * 60 * 24 * 365 * 100,
+  secrets: process.env.SECRET ? [process.env.SECRET] : []
 });
 
 // app/application/cases/cookieSettings/getSettingsFromRequest.ts
@@ -186,7 +187,7 @@ function ThemeProvider({ children }) {
 }
 
 // app/styles/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-EBVRBN3V.css";
+var tailwind_default = "/build/_assets/tailwind-JNJI3KIO.css";
 
 // app/styles/global.css
 var global_default = "/build/_assets/global-P6EFPTIT.css";
@@ -266,7 +267,10 @@ __export(add_exports, {
   loader: () => loader2,
   meta: () => meta
 });
-var import_react5 = require("@remix-run/react"), import_node5 = require("@remix-run/node");
+var import_fa = require("react-icons/fa"), import_react5 = require("@remix-run/react");
+
+// app/services/queries/auth.ts
+var import_node4 = require("@remix-run/node");
 
 // app/services/api.ts
 var import_auth = require("firebase/auth"), import_app2 = require("firebase/app"), import_firestore = require("firebase/firestore");
@@ -318,43 +322,76 @@ var auth = (0, import_auth.getAuth)((0, import_app2.getApp)()), db = (0, import_
     }, data2);
   });
   return cache_default().set(name, data), data;
-};
+}, addDocument = async (name, data) => (await (0, import_firestore.addDoc)((0, import_firestore.collection)(db, name), data), cache_default().deleteEntry(name), data);
 
 // app/services/cookies/auth.ts
 var import_node3 = require("@remix-run/node"), { getSession, commitSession, destroySession } = (0, import_node3.createCookieSessionStorage)({
   cookie: {
     name: "firebase:auth",
-    expires: new Date(Date.now() + 60 * 60 * 24),
     httpOnly: !0,
     maxAge: 60 * 60 * 24,
-    secure: !0
+    secure: !0,
+    secrets: process.env.SECRET ? [process.env.SECRET] : []
   }
 });
 
+// app/services/queries/auth.ts
+var useLogoutQuery = (request) => {
+  let logout = async () => (await auth.signOut(), await destroySession(await getSession(request.headers.get("Cookie"))), (0, import_node4.redirect)("/"));
+  return {
+    run: async () => logout()
+  };
+};
+
 // app/services/hooks/session.server.ts
-var import_firebase_admin2 = require("firebase-admin"), import_node4 = require("@remix-run/node");
+var import_firebase_admin2 = require("firebase-admin"), import_node5 = require("@remix-run/node");
 var useSessionChecker = async (request) => {
   let session = await getSession(request.headers.get("Cookie"));
   if (session.data.access_token)
     try {
       if ((await (0, import_firebase_admin2.auth)().verifyIdToken(session.data.access_token)).uid === process.env.BOSS_UID)
-        return new import_node4.Response(session.data.access_token, {
+        return new import_node5.Response(session.data.access_token, {
           status: 200
         });
     } catch {
-      (0, import_node4.redirect)("/admin");
+      (0, import_node5.redirect)("/admin");
     }
-  return (0, import_node4.redirect)("/admin");
+  return (0, import_node5.redirect)("/admin");
 }, useSessionCommitter = async (request, user) => {
   if (user && user.uid === process.env.BOSS_UID) {
     let session = await getSession(request.headers.get("Cookie"));
-    return session.set("access_token", user.stsTokenManager.accessToken), (0, import_node4.redirect)("/admin/dashboard", {
+    return session.set("access_token", user.stsTokenManager.accessToken), (0, import_node5.redirect)("/admin/dashboard", {
       headers: {
-        "Set-Cookie": await commitSession(session)
+        "Set-Cookie": await commitSession(session, {
+          expires: new Date(Date.now() + 60 * 60 * 24)
+        })
       }
     });
   }
   return {};
+};
+
+// app/services/queries/experiences.ts
+var import_node6 = require("@remix-run/node");
+
+// app/lib/form.ts
+var serializeFormData = (formData) => Object.fromEntries(formData);
+
+// app/services/queries/experiences.ts
+var key = "experiences", useExperiencesQuery = () => {
+  let fetchExperiences = async () => getCollection(key);
+  return {
+    run: async () => fetchExperiences()
+  };
+}, useAddExperienceQuery = () => {
+  let addExperience = async (formData) => {
+    formData.delete("action");
+    let experience = serializeFormData(formData);
+    return await addDocument(key, experience), (0, import_node6.redirect)("/admin/dashboard");
+  };
+  return {
+    run: async (formData) => addExperience(formData)
+  };
 };
 
 // app/application/ui/components/admin/Sider.tsx
@@ -411,7 +448,11 @@ var import_react4 = require("@remix-run/react"), EXPERIENCES_PATH = "/admin/dash
     className: "sticky inset-x-0 bottom-0 p-2 bg-white border-t border-gray-100"
   }, /* @__PURE__ */ React.createElement(import_react4.Form, {
     method: "post"
-  }, /* @__PURE__ */ React.createElement("button", {
+  }, /* @__PURE__ */ React.createElement("input", {
+    type: "hidden",
+    name: "action",
+    value: "logout"
+  }), /* @__PURE__ */ React.createElement("button", {
     type: "submit",
     className: "flex justify-center w-full px-2 py-1.5 text-sm text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700 group relative"
   }, /* @__PURE__ */ React.createElement("svg", {
@@ -430,21 +471,28 @@ var import_react4 = require("@remix-run/react"), EXPERIENCES_PATH = "/admin/dash
   }, "Logout")))));
 }, Sider_default = Sider;
 
-// app/services/queries/experiences.ts
-var key = "experiences", useExperiencesQuery = () => {
-  let fetchExperiences = async () => getCollection(key);
-  return {
-    run: async () => fetchExperiences()
-  };
-};
+// app/lib/file.ts
+var toBase64 = (file) => new Promise((resolve, reject) => {
+  let reader = new FileReader();
+  reader.readAsDataURL(file), reader.onload = () => {
+    var _a;
+    return resolve((_a = reader.result) == null ? void 0 : _a.toString());
+  }, reader.onerror = (error) => reject(error);
+});
 
 // app/routes/admin/dashboard/experiences/add.tsx
-var meta = () => ({
+var import_react6 = require("react"), meta = () => ({
   title: "Jason Van Malder",
   description: "25yo, software engineer and student by night."
 });
 async function action2({ request }) {
-  return await auth.signOut(), await destroySession(await getSession(request.headers.get("Cookie"))), (0, import_node5.redirect)("/");
+  let formData = await request.formData(), { run: logout } = useLogoutQuery(request), { run: addExperience } = useAddExperienceQuery();
+  switch (formData.get("action")) {
+    case "addExperience":
+      return await addExperience(formData);
+    case "logout":
+      return await logout();
+  }
 }
 async function loader2({ request }) {
   let session = await useSessionChecker(request);
@@ -454,7 +502,7 @@ async function loader2({ request }) {
   return { session, experiences };
 }
 var AddExperience = () => {
-  let { experiences } = (0, import_react5.useLoaderData)();
+  let [file, setFile] = (0, import_react6.useState)("");
   return /* @__PURE__ */ React.createElement("div", {
     className: "flex"
   }, /* @__PURE__ */ React.createElement(Sider_default, null), /* @__PURE__ */ React.createElement("div", {
@@ -465,7 +513,116 @@ var AddExperience = () => {
     variant: "title",
     level: 1,
     className: "font-bold"
-  }, "Add a new experience"))));
+  }, "Add a new experience")), /* @__PURE__ */ React.createElement(import_react5.Form, {
+    method: "post",
+    encType: "multipart/form-data",
+    className: "w-1/2"
+  }, /* @__PURE__ */ React.createElement("input", {
+    type: "hidden",
+    name: "action",
+    value: "addExperience"
+  }), /* @__PURE__ */ React.createElement("div", {
+    className: "mb-6"
+  }, /* @__PURE__ */ React.createElement("label", {
+    htmlFor: "place",
+    className: "block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+  }, "Place"), /* @__PURE__ */ React.createElement("input", {
+    type: "text",
+    id: "place",
+    name: "place",
+    className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+    placeholder: "Google",
+    required: !0
+  })), /* @__PURE__ */ React.createElement("div", {
+    className: "mb-6"
+  }, /* @__PURE__ */ React.createElement("label", {
+    htmlFor: "role",
+    className: "block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+  }, "Role"), /* @__PURE__ */ React.createElement("input", {
+    type: "text",
+    id: "role",
+    name: "role",
+    className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+    placeholder: "Software Engineer",
+    required: !0
+  })), /* @__PURE__ */ React.createElement("div", {
+    className: "mb-6"
+  }, /* @__PURE__ */ React.createElement("label", {
+    htmlFor: "url",
+    className: "block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+  }, "URL"), /* @__PURE__ */ React.createElement("input", {
+    type: "text",
+    id: "url",
+    name: "url",
+    className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+    placeholder: "https://google.com",
+    required: !0
+  })), /* @__PURE__ */ React.createElement("div", {
+    className: "mb-6"
+  }, /* @__PURE__ */ React.createElement("label", {
+    htmlFor: "dateFrom",
+    className: "block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+  }, "Start date"), /* @__PURE__ */ React.createElement("input", {
+    type: "text",
+    id: "dateFrom",
+    name: "dateFrom",
+    className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+    placeholder: "Sep 2022",
+    required: !0
+  })), /* @__PURE__ */ React.createElement("div", {
+    className: "mb-6"
+  }, /* @__PURE__ */ React.createElement("label", {
+    htmlFor: "dateTo",
+    className: "block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+  }, "End date"), /* @__PURE__ */ React.createElement("input", {
+    type: "text",
+    id: "dateTo",
+    name: "dateTo",
+    className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+    placeholder: "Sep 2023",
+    required: !0
+  })), /* @__PURE__ */ React.createElement("div", {
+    className: "mb-6"
+  }, /* @__PURE__ */ React.createElement("label", {
+    htmlFor: "image",
+    className: "block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+  }, "Image"), /* @__PURE__ */ React.createElement("input", {
+    type: "file",
+    className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+    placeholder: "Sep 2023",
+    required: !0,
+    onChange: async (e) => {
+      var _a;
+      let fileCandidate = (_a = e.target.files) == null ? void 0 : _a[0];
+      if (fileCandidate) {
+        let b64 = await toBase64(fileCandidate);
+        setFile(b64 ?? "");
+      }
+    }
+  }), /* @__PURE__ */ React.createElement("input", {
+    type: "hidden",
+    id: "image",
+    name: "image",
+    value: file
+  })), /* @__PURE__ */ React.createElement("div", {
+    className: "flex items-start mb-6"
+  }, /* @__PURE__ */ React.createElement("div", {
+    className: "flex items-center h-5"
+  }, /* @__PURE__ */ React.createElement("input", {
+    id: "isExtiaConsulting",
+    name: "isExtiaConsulting",
+    type: "checkbox",
+    className: "w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+  })), /* @__PURE__ */ React.createElement("label", {
+    htmlFor: "isExtiaConsulting",
+    className: "ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+  }, "Extia consulting")), /* @__PURE__ */ React.createElement("button", {
+    className: "hoverableButton"
+  }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("span", {
+    className: "cursor-pointer button p-2"
+  }, /* @__PURE__ */ React.createElement(import_fa.FaPaperPlane, {
+    className: "mr-2"
+  }), " Submit"))))));
 }, add_default = AddExperience;
 
 // app/routes/admin/dashboard/developments.tsx
@@ -476,13 +633,16 @@ __export(developments_exports, {
   loader: () => loader3,
   meta: () => meta2
 });
-var import_node6 = require("@remix-run/node");
 var meta2 = () => ({
   title: "Jason Van Malder",
   description: "25yo, software engineer and student by night."
 });
 async function action3({ request }) {
-  return await auth.signOut(), await destroySession(await getSession(request.headers.get("Cookie"))), (0, import_node6.redirect)("/");
+  let formData = await request.formData(), { run: logout } = useLogoutQuery(request);
+  switch (formData.get("action")) {
+    case "logout":
+      return await logout();
+  }
 }
 async function loader3({ request }) {
   return useSessionChecker(request);
@@ -497,18 +657,22 @@ __export(dashboard_exports, {
   loader: () => loader4,
   meta: () => meta3
 });
-var import_react6 = require("@remix-run/react"), import_node7 = require("@remix-run/node");
+var import_fa2 = require("react-icons/fa"), import_react7 = require("@remix-run/react");
 
 // app/lib/date.ts
 var import_dayjs = __toESM(require("dayjs")), formatDate = (date) => !date || date === "Now" ? "Now" : (0, import_dayjs.default)(date).format("MMM YYYY");
 
 // app/routes/admin/dashboard/index.tsx
-var import_fa = require("react-icons/fa"), meta3 = () => ({
+var meta3 = () => ({
   title: "Jason Van Malder",
   description: "25yo, software engineer and student by night."
 });
 async function action4({ request }) {
-  return await auth.signOut(), await destroySession(await getSession(request.headers.get("Cookie"))), (0, import_node7.redirect)("/");
+  let formData = await request.formData(), { run: logout } = useLogoutQuery(request);
+  switch (formData.get("action")) {
+    case "logout":
+      return await logout();
+  }
 }
 async function loader4({ request }) {
   let session = await useSessionChecker(request);
@@ -518,7 +682,7 @@ async function loader4({ request }) {
   return { session, experiences };
 }
 var AdminDashboard = () => {
-  let { experiences } = (0, import_react6.useLoaderData)();
+  let { experiences } = (0, import_react7.useLoaderData)();
   return /* @__PURE__ */ React.createElement("div", {
     className: "flex"
   }, /* @__PURE__ */ React.createElement(Sider_default, null), /* @__PURE__ */ React.createElement("div", {
@@ -529,12 +693,12 @@ var AdminDashboard = () => {
     variant: "title",
     level: 1,
     className: "font-bold"
-  }, "Experiences"), /* @__PURE__ */ React.createElement(import_react6.Link, {
+  }, "Experiences"), /* @__PURE__ */ React.createElement(import_react7.Link, {
     to: "/admin/dashboard/experiences/add",
     className: "hoverableButton"
   }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("span", {
     className: "cursor-pointer button p-2"
-  }, /* @__PURE__ */ React.createElement(import_fa.FaPlus, {
+  }, /* @__PURE__ */ React.createElement(import_fa2.FaPlus, {
     className: "mr-2"
   }), " Add a new experience")))), /* @__PURE__ */ React.createElement("div", {
     className: "grid grid-cols-1 gap-1 w-full"
@@ -575,8 +739,8 @@ __export(admin_exports, {
   loader: () => loader5,
   meta: () => meta4
 });
-var import_react7 = require("react"), import_auth6 = require("firebase/auth");
-var import_react8 = require("@remix-run/react");
+var import_react8 = require("react"), import_auth7 = require("firebase/auth");
+var import_react9 = require("@remix-run/react");
 var meta4 = () => ({
   title: "Jason Van Malder",
   description: "25yo, software engineer and student by night."
@@ -589,9 +753,9 @@ async function action5({ request }) {
   return useSessionCommitter(request, user);
 }
 var Admin = () => {
-  let { data } = (0, import_react8.useLoaderData)(), submit = (0, import_react8.useSubmit)(), signInWithGoogle = async () => {
-    let provider = new import_auth6.GoogleAuthProvider();
-    await (0, import_auth6.signInWithPopup)(auth, provider);
+  let { data } = (0, import_react9.useLoaderData)(), submit = (0, import_react9.useSubmit)(), signInWithGoogle = async () => {
+    let provider = new import_auth7.GoogleAuthProvider();
+    await (0, import_auth7.signInWithPopup)(auth, provider);
   }, waitForUser = async () => {
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -600,9 +764,9 @@ var Admin = () => {
       }
     });
   };
-  return (0, import_react7.useEffect)(() => {
+  return (0, import_react8.useEffect)(() => {
     waitForUser();
-  }, []), (0, import_react7.useEffect)(() => {
+  }, []), (0, import_react8.useEffect)(() => {
     data.access_token && auth.currentUser && (window.location.href = "/admin/dashboard");
   }, []), data.access_token ? null : /* @__PURE__ */ React.createElement("div", {
     className: "max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8"
@@ -629,16 +793,16 @@ __export(routes_exports, {
   loader: () => loader6,
   meta: () => meta5
 });
-var import_react11 = require("@remix-run/react");
+var import_react12 = require("@remix-run/react");
 
 // app/application/ui/components/common/Header.tsx
-var import_react9 = require("@remix-run/react");
+var import_react10 = require("@remix-run/react");
 var Header = () => {
   let onThemeSwitchClick = () => {
   };
   return /* @__PURE__ */ React.createElement(Container, null, /* @__PURE__ */ React.createElement("header", {
     className: "app-header"
-  }, /* @__PURE__ */ React.createElement(import_react9.Link, {
+  }, /* @__PURE__ */ React.createElement(import_react10.Link, {
     to: "/",
     prefetch: "intent",
     className: "navLink"
@@ -652,7 +816,7 @@ var Header = () => {
 };
 
 // app/application/ui/components/common/Footer.tsx
-var import_fa2 = require("react-icons/fa");
+var import_fa3 = require("react-icons/fa");
 var Footer = () => /* @__PURE__ */ React.createElement("footer", {
   className: "py-10"
 }, /* @__PURE__ */ React.createElement(Container, {
@@ -662,23 +826,23 @@ var Footer = () => /* @__PURE__ */ React.createElement("footer", {
   rel: "noopener noreferrer",
   target: "_blank",
   className: "instagram navLink text-indigo-300"
-}, /* @__PURE__ */ React.createElement(import_fa2.FaInstagram, null))), /* @__PURE__ */ React.createElement("li", null, /* @__PURE__ */ React.createElement("a", {
+}, /* @__PURE__ */ React.createElement(import_fa3.FaInstagram, null))), /* @__PURE__ */ React.createElement("li", null, /* @__PURE__ */ React.createElement("a", {
   href: "https://twitter.com/jvnm_dev",
   rel: "noopener noreferrer",
   target: "_blank",
   className: "twitter navLink text-indigo-300"
-}, /* @__PURE__ */ React.createElement(import_fa2.FaTwitter, null))), /* @__PURE__ */ React.createElement("li", null, /* @__PURE__ */ React.createElement("a", {
+}, /* @__PURE__ */ React.createElement(import_fa3.FaTwitter, null))), /* @__PURE__ */ React.createElement("li", null, /* @__PURE__ */ React.createElement("a", {
   href: "https://github.com/jvnm-dev",
   rel: "noopener noreferrer",
   target: "_blank",
   className: "github navLink text-indigo-300"
-}, /* @__PURE__ */ React.createElement(import_fa2.FaGithub, null))))));
+}, /* @__PURE__ */ React.createElement(import_fa3.FaGithub, null))))));
 
 // app/application/ui/components/about/Jumbotron.tsx
-var import_react10 = require("react"), import_react_responsive = require("react-responsive");
+var import_react11 = require("react"), import_react_responsive = require("react-responsive");
 var Jumbotron = () => {
-  let isLargeDevice = (0, import_react_responsive.useMediaQuery)({ minWidth: 1280 }), shouldShowImage = (0, import_react_responsive.useMediaQuery)({ minWidth: 1025 }), [subtitleWidth, setSubtitleWidth] = (0, import_react10.useState)(0);
-  return (0, import_react10.useEffect)(() => {
+  let isLargeDevice = (0, import_react_responsive.useMediaQuery)({ minWidth: 1280 }), shouldShowImage = (0, import_react_responsive.useMediaQuery)({ minWidth: 1025 }), [subtitleWidth, setSubtitleWidth] = (0, import_react11.useState)(0);
+  return (0, import_react11.useEffect)(() => {
     setSubtitleWidth(isLargeDevice ? 550 : 450);
   }, [isLargeDevice]), /* @__PURE__ */ React.createElement("div", {
     className: "grid gap-4 grid-cols-1 lg:grid-cols-2 my-20"
@@ -718,7 +882,7 @@ var Jumbotron = () => {
 };
 
 // app/application/ui/components/about/ProjectsList.tsx
-var import_fa3 = require("react-icons/fa");
+var import_fa4 = require("react-icons/fa");
 var ProjectsList = ({ developments }) => /* @__PURE__ */ React.createElement("div", {
   className: "grid grid-cols-1 xl:grid-cols-2 gap-4"
 }, developments.map((development) => /* @__PURE__ */ React.createElement("div", {
@@ -751,7 +915,7 @@ var ProjectsList = ({ developments }) => /* @__PURE__ */ React.createElement("di
   className: "h-full"
 }, /* @__PURE__ */ React.createElement("span", {
   className: "cursor-pointer button px-4 h-full experience-button"
-}, /* @__PURE__ */ React.createElement(import_fa3.FaEye, null)))), /* @__PURE__ */ React.createElement("a", {
+}, /* @__PURE__ */ React.createElement(import_fa4.FaEye, null)))), /* @__PURE__ */ React.createElement("a", {
   className: "h-full hoverableButton",
   href: development.sourceCodeUrl,
   target: "_blank",
@@ -760,10 +924,10 @@ var ProjectsList = ({ developments }) => /* @__PURE__ */ React.createElement("di
   className: "h-full"
 }, /* @__PURE__ */ React.createElement("span", {
   className: "cursor-pointer button px-4 h-full experience-button"
-}, /* @__PURE__ */ React.createElement(import_fa3.FaCode, null)))))))));
+}, /* @__PURE__ */ React.createElement(import_fa4.FaCode, null)))))))));
 
 // app/application/ui/components/about/ExperiencesList.tsx
-var import_fa4 = require("react-icons/fa");
+var import_fa5 = require("react-icons/fa");
 var ExperiencesList = ({ experiences }) => /* @__PURE__ */ React.createElement("div", {
   className: "grid grid-cols-1 lg:grid-cols-2 gap-4"
 }, experiences.map((experience) => /* @__PURE__ */ React.createElement("a", {
@@ -788,7 +952,7 @@ var ExperiencesList = ({ experiences }) => /* @__PURE__ */ React.createElement("
   className: "flex-1 flex justify-end h-full"
 }, /* @__PURE__ */ React.createElement("span", {
   className: "cursor-pointer button px-4 h-full rounded-r-lg experience-button"
-}, /* @__PURE__ */ React.createElement(import_fa4.FaArrowRight, null))), experience.isExtiaConsulting && /* @__PURE__ */ React.createElement("div", {
+}, /* @__PURE__ */ React.createElement(import_fa5.FaArrowRight, null))), experience.isExtiaConsulting && /* @__PURE__ */ React.createElement("div", {
   className: "absolute flex-1 flex bottom-0 left-[50%] bg-gradient-to-br translate-x-[-50%] from-[#ED7003] to-[#EF7E02] rounded-tl-lg rounded-tr-lg text-sm pl-4 pr-4"
 }, /* @__PURE__ */ React.createElement("span", {
   className: "text-white"
@@ -821,19 +985,19 @@ var key2 = "developments", useDevelopmentsQuery = () => {
 var import_dayjs2 = __toESM(require("dayjs")), useGetSortedExperiences = () => ({ getSortedExperiences: (experiences) => (experiences == null ? void 0 : experiences.length) ? experiences.sort((a, b) => (0, import_dayjs2.default)(b.dateFrom).diff((0, import_dayjs2.default)(a.dateFrom))) : [] });
 
 // app/routes/index.tsx
-var import_react12 = require("react"), meta5 = () => ({
+var import_react13 = require("react"), meta5 = () => ({
   title: "Jason Van Malder",
   description: "25yo, software engineer and student by night."
 }), loader6 = async () => ({
   experiences: await useExperiencesQuery().run(),
   developments: await useDevelopmentsQuery().run()
 }), About = () => {
-  let { getSortedExperiences } = useGetSortedExperiences(), { experiences, developments } = (0, import_react11.useLoaderData)(), sortedExperiences = getSortedExperiences(experiences), [keys, setKeys] = (0, import_react12.useState)([]);
-  return (0, import_react12.useEffect)(() => (window.onkeydown = (e) => {
+  let { getSortedExperiences } = useGetSortedExperiences(), { experiences, developments } = (0, import_react12.useLoaderData)(), sortedExperiences = getSortedExperiences(experiences), [keys, setKeys] = (0, import_react13.useState)([]);
+  return (0, import_react13.useEffect)(() => (window.onkeydown = (e) => {
     e.key.toLowerCase() === "t" || e.key.toLowerCase() === "e" || e.key.toLowerCase() === "k" ? setKeys([...keys, e.key.toLowerCase()]) : setKeys([]);
   }, () => {
     window.onkeydown = null, window.onkeyup = null;
-  }), [keys, setKeys]), (0, import_react12.useEffect)(() => {
+  }), [keys, setKeys]), (0, import_react13.useEffect)(() => {
     let [first, second, third] = keys;
     first === "t" && second === "e" && third === "k" && (window.location.href = "/admin");
   }, [keys]), /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Header, null), /* @__PURE__ */ React.createElement(AboutScreen, {
@@ -843,7 +1007,7 @@ var import_react12 = require("react"), meta5 = () => ({
 }, routes_default = About;
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "776bea2a", entry: { module: "/build/entry.client-HXNH7XNR.js", imports: ["/build/_shared/chunk-CWIXNHWE.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-NFVMFFED.js", imports: ["/build/_shared/chunk-OMWX3INQ.js", "/build/_shared/chunk-5STQIBP4.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/admin/dashboard/developments": { id: "routes/admin/dashboard/developments", parentId: "root", path: "admin/dashboard/developments", index: void 0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/developments-I47BX6AH.js", imports: ["/build/_shared/chunk-J2BL7OLY.js", "/build/_shared/chunk-UU4NM6ZN.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/dashboard/experiences/add": { id: "routes/admin/dashboard/experiences/add", parentId: "root", path: "admin/dashboard/experiences/add", index: void 0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/experiences/add-IDE27P6N.js", imports: ["/build/_shared/chunk-J2BL7OLY.js", "/build/_shared/chunk-UU4NM6ZN.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/dashboard/index": { id: "routes/admin/dashboard/index", parentId: "root", path: "admin/dashboard", index: !0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/index-V6Y3HMED.js", imports: ["/build/_shared/chunk-J2BL7OLY.js", "/build/_shared/chunk-UU4NM6ZN.js", "/build/_shared/chunk-IRD2AABU.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/index": { id: "routes/admin/index", parentId: "root", path: "admin", index: !0, caseSensitive: void 0, module: "/build/routes/admin/index-RF7AJHV3.js", imports: ["/build/_shared/chunk-UU4NM6ZN.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-YC264X36.js", imports: ["/build/_shared/chunk-IRD2AABU.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-776BEA2A.js" };
+var assets_manifest_default = { version: "ec82677d", entry: { module: "/build/entry.client-HXNH7XNR.js", imports: ["/build/_shared/chunk-CWIXNHWE.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-QYMOWNCL.js", imports: ["/build/_shared/chunk-OMWX3INQ.js", "/build/_shared/chunk-5STQIBP4.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/admin/dashboard/developments": { id: "routes/admin/dashboard/developments", parentId: "root", path: "admin/dashboard/developments", index: void 0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/developments-NPJQRKI7.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/dashboard/experiences/add": { id: "routes/admin/dashboard/experiences/add", parentId: "root", path: "admin/dashboard/experiences/add", index: void 0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/experiences/add-R3GTQIAT.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/dashboard/index": { id: "routes/admin/dashboard/index", parentId: "root", path: "admin/dashboard", index: !0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/index-2CYK5MBX.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js", "/build/_shared/chunk-OYGQVULA.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/index": { id: "routes/admin/index", parentId: "root", path: "admin", index: !0, caseSensitive: void 0, module: "/build/routes/admin/index-X3D3D552.js", imports: ["/build/_shared/chunk-635PHEEE.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-EQOKFWFW.js", imports: ["/build/_shared/chunk-OYGQVULA.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-EC82677D.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public/build", publicPath = "/build/", entry = { module: entry_server_exports }, routes = {

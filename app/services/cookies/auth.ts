@@ -4,10 +4,10 @@ const { getSession, commitSession, destroySession } =
   createCookieSessionStorage({
     cookie: {
       name: "firebase:auth",
-      expires: new Date(Date.now() + 60 * 60 * 24),
       httpOnly: true,
       maxAge: 60 * 60 * 24,
       secure: true,
+      secrets: process.env.SECRET ? [process.env.SECRET] : [],
     },
   });
 
