@@ -10,8 +10,14 @@ export type LogoutQuery = {
 export const useLogoutQuery = (request: Request): LogoutQuery => {
   const logout = async (): Promise<TypedResponse<never>> => {
     await auth.signOut();
-    await destroySession(await getSession(request.headers.get("Cookie")));
-    return redirect("/");
+
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": await destroySession(
+          await getSession(request.headers.get("Cookie"))
+        ),
+      },
+    });
   };
 
   return {

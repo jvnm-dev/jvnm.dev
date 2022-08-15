@@ -187,7 +187,7 @@ function ThemeProvider({ children }) {
 }
 
 // app/styles/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-JNJI3KIO.css";
+var tailwind_default = "/build/_assets/tailwind-Q4Q47XO2.css";
 
 // app/styles/global.css
 var global_default = "/build/_assets/global-P6EFPTIT.css";
@@ -309,7 +309,11 @@ var Cache = class {
 (0, import_app2.getApps)().length === 0 && (0, import_app2.initializeApp)({
   apiKey: "AIzaSyCWqRy_mfGNqY7d74F68xtUN_rMFwNuTVY",
   authDomain: "jvnm-dev.firebaseapp.com",
-  projectId: "jvnm-dev"
+  projectId: "jvnm-dev",
+  storageBucket: "jvnm-dev.appspot.com",
+  messagingSenderId: "226586771735",
+  appId: "1:226586771735:web:51d2515b38163fa036b752",
+  measurementId: "G-GE5WQVG58R"
 });
 var auth = (0, import_auth.getAuth)((0, import_app2.getApp)()), db = (0, import_firestore.getFirestore)((0, import_app2.getApp)()), getCollection = async (name) => {
   let cachedData = cache_default().get(name);
@@ -337,7 +341,11 @@ var import_node3 = require("@remix-run/node"), { getSession, commitSession, dest
 
 // app/services/queries/auth.ts
 var useLogoutQuery = (request) => {
-  let logout = async () => (await auth.signOut(), await destroySession(await getSession(request.headers.get("Cookie"))), (0, import_node4.redirect)("/"));
+  let logout = async () => (await auth.signOut(), (0, import_node4.redirect)("/", {
+    headers: {
+      "Set-Cookie": await destroySession(await getSession(request.headers.get("Cookie")))
+    }
+  }));
   return {
     run: async () => logout()
   };
@@ -345,22 +353,27 @@ var useLogoutQuery = (request) => {
 
 // app/services/hooks/session.server.ts
 var import_firebase_admin2 = require("firebase-admin"), import_node5 = require("@remix-run/node");
-var useSessionChecker = async (request) => {
+var verifySession = async (request) => {
   let session = await getSession(request.headers.get("Cookie"));
   if (session.data.access_token)
     try {
-      if ((await (0, import_firebase_admin2.auth)().verifyIdToken(session.data.access_token)).uid === process.env.BOSS_UID)
-        return new import_node5.Response(session.data.access_token, {
-          status: 200
-        });
+      if ((await (0, import_firebase_admin2.auth)().verifySessionCookie(session.data.access_token)).uid === process.env.BOSS_UID)
+        return !0;
     } catch {
-      (0, import_node5.redirect)("/admin");
+      return !1;
     }
-  return (0, import_node5.redirect)("/admin");
+  return !1;
+}, useSessionChecker = async (request) => {
+  let session = await getSession(request.headers.get("Cookie"));
+  return await verifySession(request) ? new import_node5.Response(session.data.access_token, {
+    status: 200
+  }) : (0, import_node5.redirect)("/admin");
 }, useSessionCommitter = async (request, user) => {
   if (user && user.uid === process.env.BOSS_UID) {
-    let session = await getSession(request.headers.get("Cookie"));
-    return session.set("access_token", user.stsTokenManager.accessToken), (0, import_node5.redirect)("/admin/dashboard", {
+    let session = await getSession(request.headers.get("Cookie")), token = await (0, import_firebase_admin2.auth)().createSessionCookie(user.stsTokenManager.accessToken, {
+      expiresIn: 60 * 60 * 24 * 5 * 1e3
+    });
+    return session.set("access_token", token), (0, import_node5.redirect)("/admin/dashboard", {
       headers: {
         "Set-Cookie": await commitSession(session, {
           expires: new Date(Date.now() + 60 * 60 * 24)
@@ -739,36 +752,22 @@ __export(admin_exports, {
   loader: () => loader5,
   meta: () => meta4
 });
-var import_react8 = require("react"), import_auth7 = require("firebase/auth");
-var import_react9 = require("@remix-run/react");
+var import_node7 = require("@remix-run/node"), import_auth7 = require("firebase/auth");
+var import_react8 = require("@remix-run/react");
 var meta4 = () => ({
   title: "Jason Van Malder",
   description: "25yo, software engineer and student by night."
 });
 async function loader5({ request }) {
-  return getSession(request.headers.get("Cookie"));
+  return await verifySession(request) ? (0, import_node7.redirect)("/admin/dashboard") : null;
 }
 async function action5({ request }) {
   let data = await request.formData(), user = JSON.parse(data.get("user"));
   return useSessionCommitter(request, user);
 }
 var Admin = () => {
-  let { data } = (0, import_react9.useLoaderData)(), submit = (0, import_react9.useSubmit)(), signInWithGoogle = async () => {
-    let provider = new import_auth7.GoogleAuthProvider();
-    await (0, import_auth7.signInWithPopup)(auth, provider);
-  }, waitForUser = async () => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        let formData = new FormData();
-        formData.set("user", JSON.stringify(user)), submit(formData, { method: "post" });
-      }
-    });
-  };
-  return (0, import_react8.useEffect)(() => {
-    waitForUser();
-  }, []), (0, import_react8.useEffect)(() => {
-    data.access_token && auth.currentUser && (window.location.href = "/admin/dashboard");
-  }, []), data.access_token ? null : /* @__PURE__ */ React.createElement("div", {
+  let submit = (0, import_react8.useSubmit)();
+  return /* @__PURE__ */ React.createElement("div", {
     className: "max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8"
   }, /* @__PURE__ */ React.createElement("div", {
     className: "max-w-lg mx-auto"
@@ -779,7 +778,13 @@ var Admin = () => {
   }, "Please sign in to confirm your identity."), /* @__PURE__ */ React.createElement("div", {
     className: "bg-white p-8 mt-6 mb-0 space-y-4 rounded-lg shadow-2xl"
   }, /* @__PURE__ */ React.createElement("span", {
-    onClick: signInWithGoogle,
+    onClick: async () => {
+      let provider = new import_auth7.GoogleAuthProvider(), { user } = await (0, import_auth7.signInWithPopup)(auth, provider);
+      if (user) {
+        let formData = new FormData();
+        formData.set("user", JSON.stringify(user)), submit(formData, { method: "post" });
+      }
+    },
     className: "block w-full px-5 py-3 text-sm font-medium text-white bg-indigo-600 rounded-lg text-center cursor-pointer"
   }, "Sign in with Google"), /* @__PURE__ */ React.createElement("p", {
     className: "text-sm text-center text-gray-500"
@@ -793,16 +798,16 @@ __export(routes_exports, {
   loader: () => loader6,
   meta: () => meta5
 });
-var import_react12 = require("@remix-run/react");
+var import_react11 = require("@remix-run/react");
 
 // app/application/ui/components/common/Header.tsx
-var import_react10 = require("@remix-run/react");
+var import_react9 = require("@remix-run/react");
 var Header = () => {
   let onThemeSwitchClick = () => {
   };
   return /* @__PURE__ */ React.createElement(Container, null, /* @__PURE__ */ React.createElement("header", {
     className: "app-header"
-  }, /* @__PURE__ */ React.createElement(import_react10.Link, {
+  }, /* @__PURE__ */ React.createElement(import_react9.Link, {
     to: "/",
     prefetch: "intent",
     className: "navLink"
@@ -839,10 +844,10 @@ var Footer = () => /* @__PURE__ */ React.createElement("footer", {
 }, /* @__PURE__ */ React.createElement(import_fa3.FaGithub, null))))));
 
 // app/application/ui/components/about/Jumbotron.tsx
-var import_react11 = require("react"), import_react_responsive = require("react-responsive");
+var import_react10 = require("react"), import_react_responsive = require("react-responsive");
 var Jumbotron = () => {
-  let isLargeDevice = (0, import_react_responsive.useMediaQuery)({ minWidth: 1280 }), shouldShowImage = (0, import_react_responsive.useMediaQuery)({ minWidth: 1025 }), [subtitleWidth, setSubtitleWidth] = (0, import_react11.useState)(0);
-  return (0, import_react11.useEffect)(() => {
+  let isLargeDevice = (0, import_react_responsive.useMediaQuery)({ minWidth: 1280 }), shouldShowImage = (0, import_react_responsive.useMediaQuery)({ minWidth: 1025 }), [subtitleWidth, setSubtitleWidth] = (0, import_react10.useState)(0);
+  return (0, import_react10.useEffect)(() => {
     setSubtitleWidth(isLargeDevice ? 550 : 450);
   }, [isLargeDevice]), /* @__PURE__ */ React.createElement("div", {
     className: "grid gap-4 grid-cols-1 lg:grid-cols-2 my-20"
@@ -985,19 +990,19 @@ var key2 = "developments", useDevelopmentsQuery = () => {
 var import_dayjs2 = __toESM(require("dayjs")), useGetSortedExperiences = () => ({ getSortedExperiences: (experiences) => (experiences == null ? void 0 : experiences.length) ? experiences.sort((a, b) => (0, import_dayjs2.default)(b.dateFrom).diff((0, import_dayjs2.default)(a.dateFrom))) : [] });
 
 // app/routes/index.tsx
-var import_react13 = require("react"), meta5 = () => ({
+var import_react12 = require("react"), meta5 = () => ({
   title: "Jason Van Malder",
   description: "25yo, software engineer and student by night."
 }), loader6 = async () => ({
   experiences: await useExperiencesQuery().run(),
   developments: await useDevelopmentsQuery().run()
 }), About = () => {
-  let { getSortedExperiences } = useGetSortedExperiences(), { experiences, developments } = (0, import_react12.useLoaderData)(), sortedExperiences = getSortedExperiences(experiences), [keys, setKeys] = (0, import_react13.useState)([]);
-  return (0, import_react13.useEffect)(() => (window.onkeydown = (e) => {
+  let { getSortedExperiences } = useGetSortedExperiences(), { experiences, developments } = (0, import_react11.useLoaderData)(), sortedExperiences = getSortedExperiences(experiences), [keys, setKeys] = (0, import_react12.useState)([]);
+  return (0, import_react12.useEffect)(() => (window.onkeydown = (e) => {
     e.key.toLowerCase() === "t" || e.key.toLowerCase() === "e" || e.key.toLowerCase() === "k" ? setKeys([...keys, e.key.toLowerCase()]) : setKeys([]);
   }, () => {
     window.onkeydown = null, window.onkeyup = null;
-  }), [keys, setKeys]), (0, import_react13.useEffect)(() => {
+  }), [keys, setKeys]), (0, import_react12.useEffect)(() => {
     let [first, second, third] = keys;
     first === "t" && second === "e" && third === "k" && (window.location.href = "/admin");
   }, [keys]), /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Header, null), /* @__PURE__ */ React.createElement(AboutScreen, {
@@ -1007,7 +1012,7 @@ var import_react13 = require("react"), meta5 = () => ({
 }, routes_default = About;
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "ec82677d", entry: { module: "/build/entry.client-HXNH7XNR.js", imports: ["/build/_shared/chunk-CWIXNHWE.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-QYMOWNCL.js", imports: ["/build/_shared/chunk-OMWX3INQ.js", "/build/_shared/chunk-5STQIBP4.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/admin/dashboard/developments": { id: "routes/admin/dashboard/developments", parentId: "root", path: "admin/dashboard/developments", index: void 0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/developments-NPJQRKI7.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/dashboard/experiences/add": { id: "routes/admin/dashboard/experiences/add", parentId: "root", path: "admin/dashboard/experiences/add", index: void 0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/experiences/add-R3GTQIAT.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/dashboard/index": { id: "routes/admin/dashboard/index", parentId: "root", path: "admin/dashboard", index: !0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/index-2CYK5MBX.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js", "/build/_shared/chunk-OYGQVULA.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/index": { id: "routes/admin/index", parentId: "root", path: "admin", index: !0, caseSensitive: void 0, module: "/build/routes/admin/index-X3D3D552.js", imports: ["/build/_shared/chunk-635PHEEE.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-EQOKFWFW.js", imports: ["/build/_shared/chunk-OYGQVULA.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-EC82677D.js" };
+var assets_manifest_default = { version: "cf35d1d3", entry: { module: "/build/entry.client-HXNH7XNR.js", imports: ["/build/_shared/chunk-CWIXNHWE.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-CVHXYDX2.js", imports: ["/build/_shared/chunk-OMWX3INQ.js", "/build/_shared/chunk-5STQIBP4.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/admin/dashboard/developments": { id: "routes/admin/dashboard/developments", parentId: "root", path: "admin/dashboard/developments", index: void 0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/developments-NPJQRKI7.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/dashboard/experiences/add": { id: "routes/admin/dashboard/experiences/add", parentId: "root", path: "admin/dashboard/experiences/add", index: void 0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/experiences/add-R3GTQIAT.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/dashboard/index": { id: "routes/admin/dashboard/index", parentId: "root", path: "admin/dashboard", index: !0, caseSensitive: void 0, module: "/build/routes/admin/dashboard/index-2CYK5MBX.js", imports: ["/build/_shared/chunk-NUECXDAN.js", "/build/_shared/chunk-635PHEEE.js", "/build/_shared/chunk-OYGQVULA.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/admin/index": { id: "routes/admin/index", parentId: "root", path: "admin", index: !0, caseSensitive: void 0, module: "/build/routes/admin/index-LWWCORUV.js", imports: ["/build/_shared/chunk-635PHEEE.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-EQOKFWFW.js", imports: ["/build/_shared/chunk-OYGQVULA.js", "/build/_shared/chunk-4PPG7YQR.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-CF35D1D3.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public/build", publicPath = "/build/", entry = { module: entry_server_exports }, routes = {

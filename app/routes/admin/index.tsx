@@ -2,14 +2,17 @@ import {
   ActionArgs,
   LoaderArgs,
   MetaFunction,
+  redirect,
 } from "@remix-run/node";
-import { useEffect } from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 import { auth } from "~/services/api";
 import { getSession } from "~/services/cookies/auth";
-import { useLoaderData, useSubmit } from "@remix-run/react";
-import { useSessionCommitter } from "~/services/hooks/session.server";
+import { useSubmit } from "@remix-run/react";
+import {
+  useSessionCommitter,
+  verifySession,
+} from "~/services/hooks/session.server";
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",
@@ -17,7 +20,13 @@ export let meta: MetaFunction = () => ({
 });
 
 export async function loader({ request }: LoaderArgs) {
-  return getSession(request.headers.get("Cookie"));
+  const loggedIn = await verifySession(request);
+
+  if (loggedIn) {
+    return redirect("/admin/dashboard");
+  }
+
+  return null;
 }
 
 export async function action({ request }: ActionArgs) {
@@ -28,37 +37,18 @@ export async function action({ request }: ActionArgs) {
 }
 
 const Admin = () => {
-  const { data } = useLoaderData();
   const submit = useSubmit();
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  };
+    const { user } = await signInWithPopup(auth, provider);
 
-  const waitForUser = async () => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        const formData = new FormData();
-        formData.set("user", JSON.stringify(user));
-        submit(formData, { method: "post" });
-      }
-    });
-  };
-
-  useEffect(() => {
-    waitForUser();
-  }, []);
-
-  useEffect(() => {
-    if (data.access_token && auth.currentUser) {
-      window.location.href = "/admin/dashboard";
+    if (user) {
+      const formData = new FormData();
+      formData.set("user", JSON.stringify(user));
+      submit(formData, { method: "post" });
     }
-  }, []);
-
-  if (data.access_token) {
-    return null;
-  }
+  };
 
   return (
     <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
