@@ -1,18 +1,17 @@
+import { Form } from "@remix-run/react";
 import {
   ActionArgs,
   LoaderArgs,
   MetaFunction,
   redirect,
 } from "@remix-run/node";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
-import { auth } from "~/services/api";
-import { getSession } from "~/services/cookies/auth";
-import { useSubmit } from "@remix-run/react";
 import {
   useSessionCommitter,
   verifySession,
 } from "~/services/hooks/session.server";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth } from "~/firebase";
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",
@@ -31,25 +30,19 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: ActionArgs) {
   const data = await request.formData();
-  const user = JSON.parse(data.get("user") as string);
+  const auth = await getAuth();
+  const email = data.get("email")?.toString();
+  const password = data.get("password")?.toString();
 
-  return useSessionCommitter(request, user);
+  if (email && password) {
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
+    return useSessionCommitter(request, user);
+  }
+
+  return null;
 }
 
 const Admin = () => {
-  const submit = useSubmit();
-
-  const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    const { user } = await signInWithPopup(auth, provider);
-
-    if (user) {
-      const formData = new FormData();
-      formData.set("user", JSON.stringify(user));
-      submit(formData, { method: "post" });
-    }
-  };
-
   return (
     <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
       <div className="max-w-lg mx-auto">
@@ -62,12 +55,31 @@ const Admin = () => {
         </p>
 
         <div className="bg-white p-8 mt-6 mb-0 space-y-4 rounded-lg shadow-2xl">
-          <span
-            onClick={signInWithGoogle}
-            className="block w-full px-5 py-3 text-sm font-medium text-white bg-indigo-600 rounded-lg text-center cursor-pointer"
-          >
-            Sign in with Google
-          </span>
+          <Form method="post">
+            <input
+              type="text"
+              id="email"
+              name="email"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Email"
+              required
+            />
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Password"
+              required
+            />
+            <button
+              type="submit"
+              className="mt-4 block w-full px-5 py-3 text-sm font-medium text-white bg-indigo-600 rounded-lg text-center cursor-pointer"
+            >
+              Sign in
+            </button>
+          </Form>
 
           <p className="text-sm text-center text-gray-500">
             You are not the boss? Then what are you doing here? 🤔

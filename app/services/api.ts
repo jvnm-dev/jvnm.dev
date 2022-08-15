@@ -1,32 +1,23 @@
-import { getAuth } from "firebase/auth";
-import { getApp, getApps, initializeApp } from "firebase/app";
-import { collection, getDocs, getFirestore, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
 import cache from "~/lib/cache";
-
-if (getApps().length === 0) {
-  initializeApp({
-    apiKey: "AIzaSyCWqRy_mfGNqY7d74F68xtUN_rMFwNuTVY",
-    authDomain: "jvnm-dev.firebaseapp.com",
-    projectId: "jvnm-dev",
-    storageBucket: "jvnm-dev.appspot.com",
-    messagingSenderId: "226586771735",
-    appId: "1:226586771735:web:51d2515b38163fa036b752",
-    measurementId: "G-GE5WQVG58R",
-  });
-}
-
-const auth = getAuth(getApp());
-const db = getFirestore(getApp());
+import { getAuth, getFirestore } from "~/firebase";
 
 const getCollection = async <T>(name: string): Promise<T[]> => {
+  const firestore = getFirestore();
+
+  if (!firestore) {
+    console.error("Firestore is not initialized");
+    return [];
+  }
+
   const cachedData = cache().get<T[]>(name);
 
   if (cachedData) {
     return cachedData;
   }
 
-  const querySnapshot = await getDocs(collection(db, name));
+  const querySnapshot = await getDocs(collection(firestore, name));
 
   const data = querySnapshot.docs.map((doc) => {
     const id = doc.id;
@@ -44,11 +35,17 @@ const getCollection = async <T>(name: string): Promise<T[]> => {
 };
 
 const addDocument = async <T>(name: string, data: T): Promise<T> => {
-  await addDoc(collection(db, name), data as Record<string, any>);
+  const firestore = getFirestore();
+
+  if (!firestore) {
+    console.error("Firestore is not initialized");
+  }
+
+  await addDoc(collection(firestore, name), data as Record<string, any>);
 
   cache().deleteEntry(name);
 
   return data;
 };
 
-export { auth, db, getCollection, addDocument };
+export { getCollection, addDocument };

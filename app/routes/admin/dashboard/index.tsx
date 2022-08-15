@@ -12,6 +12,7 @@ import { useExperiencesQuery } from "~/services/queries/experiences";
 
 import Sider from "~/application/ui/components/admin/Sider";
 import { Typography } from "~/application/ui/components/common/Typography";
+import { getAuth } from "~/firebase";
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",

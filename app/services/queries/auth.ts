@@ -1,7 +1,7 @@
 import { redirect, TypedResponse } from "@remix-run/node";
 
 import cache from "~/lib/cache";
-import { auth } from "~/services/api";
+import { getAuth } from "~/firebase";
 import { destroySession, getSession } from "~/services/cookies/auth";
 
 export type LogoutQuery = {
@@ -10,7 +10,7 @@ export type LogoutQuery = {
 
 export const useLogoutQuery = (request: Request): LogoutQuery => {
   const logout = async (): Promise<TypedResponse<never>> => {
-    await auth.signOut();
+    await (await getAuth()).signOut();
 
     cache().clear();
 
