@@ -1,6 +1,8 @@
 import { redirect, Response } from "@remix-run/node";
-import { auth } from "~/firebase.server";
+import { signInWithCustomToken } from "firebase/auth";
 
+import { auth } from "~/firebase.server";
+import { getAuth } from "~/firebase";
 import { commitSession, getSession } from "~/services/cookies/auth";
 
 export const verifySession = async (request: Request) => {
@@ -48,6 +50,9 @@ export const useSessionCommitter = async (request: Request, user: any) => {
         expiresIn: 60 * 60 * 24 * 5 * 1000,
       }
     );
+
+    const customToken = await auth.createCustomToken(user.uid);
+    await signInWithCustomToken(await getAuth(), customToken);
 
     session.set("session_token", jwt);
 
