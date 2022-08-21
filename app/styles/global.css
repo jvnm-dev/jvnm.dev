@@ -11,6 +11,9 @@
   --black-color: rgb(36, 41, 46);
   --primary-color: #6366f1;
   --primary-color-gradient-derivate: #818cf8;
+
+  --danger-color: #f5222d;
+  --danger-color-gradient-derivate: #f3555c;
 }
 
 @font-face {
@@ -215,6 +218,10 @@ footer h2 {
   position: relative;
 }
 
+.button.danger {
+  color: var(--danger-color);
+}
+
 .button:before {
   content: " ";
   position: absolute;
@@ -229,6 +236,14 @@ footer h2 {
     var(--primary-color-gradient-derivate)
   );
   z-index: -1;
+}
+
+.button.danger:before {
+  background: linear-gradient(
+    45deg,
+    var(--danger-color),
+    var(--danger-color-gradient-derivate)
+  );
 }
 
 .hoverableButton:hover div .button {

@@ -1,3 +1,7 @@
+type EntryWithId = {
+  id: string;
+};
+
 class Cache {
   private entries = new Map<string, any>();
   private expirationEntries = new Map<string, number>();
@@ -14,6 +18,16 @@ class Cache {
     return this.entries.get(key);
   }
 
+  getChildById<T = any>(key: string, id: string): T | undefined {
+    const data = this.get<T[]>(key);
+
+    if (!data) {
+      return;
+    }
+
+    return data?.find((entry) => (entry as EntryWithId).id === id);
+  }
+
   set<T = any>(key: string, value: T): void {
     this.entries.set(key, value);
     this.expirationEntries.set(key, Date.now() + 1000 * 60 * 15);
@@ -25,6 +39,18 @@ class Cache {
 
   deleteEntry(key: string): void {
     this.entries.delete(key);
+  }
+
+  deleteChildById<T = any>(key: string, id: string): void {
+    const data = this.get<T[]>(key);
+
+    if (!data) {
+      return;
+    }
+
+    const newData = data.filter((entry) => (entry as EntryWithId).id !== id);
+
+    this.set(key, newData);
   }
 
   clear(): void {

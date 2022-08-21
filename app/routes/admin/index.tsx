@@ -1,20 +1,17 @@
-import { Form, useSubmit } from "@remix-run/react";
+import { useSubmit } from "@remix-run/react";
 import {
   ActionArgs,
   LoaderArgs,
   MetaFunction,
   redirect,
 } from "@remix-run/node";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 import {
   useSessionCommitter,
   verifySession,
 } from "~/services/hooks/session.server";
-import {
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from "firebase/auth";
+
 import { getAuth } from "~/firebase";
 
 export let meta: MetaFunction = () => ({

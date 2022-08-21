@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
@@ -11,7 +12,6 @@ import { AboutScreen } from "~/application/ui/screens/AboutScreen";
 import { useExperiencesQuery } from "~/services/queries/experiences";
 import { useDevelopmentsQuery } from "~/services/queries/developments";
 import { useGetSortedExperiences } from "~/application/cases/experiences/getSortedExperiences";
-import { useEffect, useState } from "react";
 
 type LoaderData = {
   experiences: Experience[];

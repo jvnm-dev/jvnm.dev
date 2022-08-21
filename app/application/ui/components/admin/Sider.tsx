@@ -1,6 +1,6 @@
 import { Form, Link, useLocation } from "@remix-run/react";
 
-const EXPERIENCES_PATH = "/admin/dashboard";
+const EXPERIENCES_PATH = "/admin/dashboard/experiences";
 const DEVELOPMENTS_PATH = "/admin/dashboard/developments";
 
 const Sider = () => {
@@ -11,15 +11,17 @@ const Sider = () => {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const isExperiencesActive = pathname === EXPERIENCES_PATH;
-  const isDevelopmentsActive = pathname === DEVELOPMENTS_PATH;
+  const isExperiencesActive = pathname.includes(EXPERIENCES_PATH);
+  const isDevelopmentsActive = pathname.includes(DEVELOPMENTS_PATH);
 
   return (
     <div className="flex flex-col justify-between w-16 h-screen bg-white border-r sticky top-0 left-0 z-10">
       <div>
-        <div className="inline-flex items-center justify-center w-16 h-16">
-          <img src="/favicon.ico" className="block w-10 h-10 rounded-lg" />
-        </div>
+        <Link to="/">
+          <div className="inline-flex items-center justify-center w-16 h-16">
+            <img src="/favicon.ico" className="block w-10 h-10 rounded-lg" />
+          </div>
+        </Link>
 
         <div className="border-t border-gray-100">
           <nav className="flex flex-col p-2">

@@ -13,6 +13,9 @@ export const verifySession = async (request: Request) => {
       const result = await auth.verifySessionCookie(session.data.session_token);
 
       if (result.uid === process.env.BOSS_UID) {
+        const customToken = await auth.createCustomToken(result.uid);
+        await signInWithCustomToken(await getAuth(), customToken);
+
         return true;
       }
     } catch (e) {
@@ -56,7 +59,7 @@ export const useSessionCommitter = async (request: Request, user: any) => {
 
     session.set("session_token", jwt);
 
-    return redirect("/admin/dashboard", {
+    return redirect("/admin/dashboard/experiences", {
       headers: {
         "Set-Cookie": await commitSession(session, {
           expires: new Date(Date.now() + 60 * 60 * 24 * 5 * 1000),
