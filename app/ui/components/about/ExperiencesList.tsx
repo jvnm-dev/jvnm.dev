@@ -4,7 +4,7 @@ import { formatDate } from "~/lib/date";
 
 import { Experience } from "~/domain/experience";
 
-import { Typography } from "~/application/ui/components/common/Typography";
+import { Typography } from "~/ui/components/common/Typography";
 
 interface IOwnProps {
   experiences: Experience[];

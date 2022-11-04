@@ -8,12 +8,10 @@ import {
   redirect,
 } from "@remix-run/node";
 
-import {
-  useDeleteExperienceQuery,
-  useExperienceQuery,
-} from "~/services/queries/experiences";
+import { useExperienceQuery } from "~/services/api/queries/experiences";
+import { useDeleteExperienceQuery } from "~/services/api/mutations/experience";
 
-import { Typography } from "~/application/ui/components/common/Typography";
+import { Typography } from "~/ui/components/common/Typography";
 
 import { toBase64 } from "~/lib/file";
 

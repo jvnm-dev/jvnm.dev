@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { Experience } from "~/domain/experience";
 
-export const useGetSortedExperiences = () => {
-  const getSortedExperiences = (experiences: Experience[]) => {
+export const useSortExperiences = () => {
+  const sortExperiences = (experiences: Experience[]) => {
     if (!experiences?.length) {
       return [];
     }
@@ -12,5 +12,5 @@ export const useGetSortedExperiences = () => {
     });
   };
 
-  return { getSortedExperiences };
+  return { sortExperiences };
 };

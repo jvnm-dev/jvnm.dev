@@ -1,6 +1,6 @@
 import { FaGithub, FaInstagram, FaTwitter } from "react-icons/fa";
 
-import { Container } from "~/application/ui/components/common/Container";
+import { Container } from "~/ui/components/common/Container";
 
 export const Footer = () => {
   return (

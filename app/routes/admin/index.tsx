@@ -10,7 +10,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import {
   useSessionCommitter,
   verifySession,
-} from "~/services/hooks/session.server";
+} from "~/application/server/auth/session.server";
 
 import { getAuth } from "~/firebase";
 

@@ -1,9 +1,4 @@
-import type {
-  ActionFunction,
-  LinksFunction,
-  LoaderFunction,
-  MetaFunction,
-} from "@remix-run/node";
+import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -16,12 +11,8 @@ import {
 } from "@remix-run/react";
 import classNames from "classnames";
 
-import { Container } from "~/application/ui/components/common/Container";
-import { Typography } from "~/application/ui/components/common/Typography";
-import { useGetSettingsFromRequest } from "~/application/cases/cookieSettings/getSettingsFromRequest";
-import { useSetSettingsAndRedirect } from "~/application/cases/cookieSettings/setSettingsAndRedirect";
-
-import { ThemeProvider } from "~/services/hooks/theme-provider";
+import { Container } from "~/ui/components/common/Container";
+import { Typography } from "~/ui/components/common/Typography";
 
 import tailwindStylesUrl from "~/styles/tailwind.css";
 import globalStylesUrl from "~/styles/global.css";
@@ -41,13 +32,11 @@ export let links: LinksFunction = () => {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <Document>
-        <Layout>
-          <Outlet />
-        </Layout>
-      </Document>
-    </ThemeProvider>
+    <Document>
+      <Layout>
+        <Outlet />
+      </Layout>
+    </Document>
   );
 }
 
@@ -107,16 +96,6 @@ export function CatchBoundary() {
     </Document>
   );
 }
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const { getSettingsFromRequest } = useGetSettingsFromRequest();
-  return getSettingsFromRequest(request);
-};
-
-export const action: ActionFunction = async ({ request }) => {
-  const { setSettingsAndRedirect } = useSetSettingsAndRedirect();
-  return setSettingsAndRedirect(request);
-};
 
 export const Document = ({
   children,

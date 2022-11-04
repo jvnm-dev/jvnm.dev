@@ -1,3 +1,5 @@
+export const ExperiencesKey = "experiences";
+
 export type Experience = {
   id: string;
   image: string;

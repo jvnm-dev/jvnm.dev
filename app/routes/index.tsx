@@ -3,19 +3,16 @@ import { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import { Experience } from "~/domain/experience";
-import { Development } from "~/domain/development";
 
-import { Header } from "~/application/ui/components/common/Header";
-import { Footer } from "~/application/ui/components/common/Footer";
-import { AboutScreen } from "~/application/ui/screens/AboutScreen";
+import { Header } from "~/ui/components/common/Header";
+import { Footer } from "~/ui/components/common/Footer";
+import { AboutScreen } from "~/ui/screens/AboutScreen";
 
-import { useExperiencesQuery } from "~/services/queries/experiences";
-import { useDevelopmentsQuery } from "~/services/queries/developments";
-import { useGetSortedExperiences } from "~/application/cases/experiences/getSortedExperiences";
+import { useExperiencesQuery } from "~/services/api/queries/experiences";
+import { useSortExperiences } from "~/application/client/experiences/sortExperiences";
 
 type LoaderData = {
   experiences: Experience[];
-  developments: Development[];
 };
 
 export let meta: MetaFunction = () => ({
@@ -25,13 +22,12 @@ export let meta: MetaFunction = () => ({
 
 export let loader: LoaderFunction = async (): Promise<LoaderData> => ({
   experiences: await useExperiencesQuery().run(),
-  developments: await useDevelopmentsQuery().run(),
 });
 
 const About = () => {
-  const { getSortedExperiences } = useGetSortedExperiences();
-  const { experiences, developments } = useLoaderData<LoaderData>();
-  const sortedExperiences = getSortedExperiences(experiences);
+  const { sortExperiences } = useSortExperiences();
+  const { experiences } = useLoaderData<LoaderData>();
+  const sortedExperiences = sortExperiences(experiences);
 
   const [keys, setKeys] = useState<string[]>([]);
 
@@ -65,10 +61,7 @@ const About = () => {
   return (
     <>
       <Header />
-      <AboutScreen
-        experiences={sortedExperiences}
-        developments={developments}
-      />
+      <AboutScreen experiences={sortedExperiences} />
       <Footer />
     </>
   );

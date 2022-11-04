@@ -2,12 +2,10 @@ import { FaPaperPlane } from "react-icons/fa";
 import { Form } from "@remix-run/react";
 import { ActionArgs, MetaFunction } from "@remix-run/node";
 
-import {
-  useAddExperienceQuery,
-  useExperiencesQuery,
-} from "~/services/queries/experiences";
+import { useExperiencesQuery } from "~/services/api/queries/experiences";
+import { useAddExperienceQuery } from "~/services/api/mutations/experience";
 
-import { Typography } from "~/application/ui/components/common/Typography";
+import { Typography } from "~/ui/components/common/Typography";
 
 import { toBase64 } from "~/lib/file";
 import { ChangeEvent, useState } from "react";

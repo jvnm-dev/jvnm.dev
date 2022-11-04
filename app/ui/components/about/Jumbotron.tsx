@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { Typography } from "~/application/ui/components/common/Typography";
-import Image from "~/application/ui/svg/about.svg";
+import { Typography } from "~/ui/components/common/Typography";
+import Image from "~/ui/svg/about.svg";
 
 export const Jumbotron = () => {
   const isLargeDevice = useMediaQuery({ minWidth: 1280 });

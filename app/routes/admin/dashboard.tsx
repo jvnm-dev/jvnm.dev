@@ -6,10 +6,10 @@ import {
   redirect,
 } from "@remix-run/node";
 
-import { useLogoutQuery } from "~/services/queries/auth";
-import { useSessionChecker } from "~/services/hooks/session.server";
+import { useLogoutQuery } from "~/services/api/queries/auth";
+import { useSessionChecker } from "~/application/server/auth/session.server";
 
-import Sider from "~/application/ui/components/admin/Sider";
+import Sider from "~/ui/components/admin/Sider";
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",

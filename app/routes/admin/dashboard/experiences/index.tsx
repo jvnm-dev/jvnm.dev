@@ -3,11 +3,11 @@ import { FaPlus } from "react-icons/fa";
 
 import { formatDate } from "~/lib/date";
 
-import { Typography } from "~/application/ui/components/common/Typography";
+import { Typography } from "~/ui/components/common/Typography";
 
 import { Experience } from "~/domain/experience";
 
-import { useExperiencesQuery } from "~/services/queries/experiences";
+import { useExperiencesQuery } from "~/services/api/queries/experiences";
 
 export async function loader() {
   const experiences = await useExperiencesQuery().run();
