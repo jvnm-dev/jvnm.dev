@@ -1,2 +1,2 @@
 # jvnm.dev-web
-My personal website &amp; blog made with Remix
+My personal website made with Remix and Firebase
