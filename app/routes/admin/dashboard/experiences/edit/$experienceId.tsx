@@ -8,8 +8,7 @@ import {
   redirect,
 } from "@remix-run/node";
 
-import { useExperienceQuery } from "~/services/api/queries/experiences";
-import { useDeleteExperienceQuery } from "~/services/api/mutations/experience";
+import { useExperiences } from "~/services/experienceAdapter";
 
 import { Typography } from "~/ui/components/common/Typography";
 
@@ -24,7 +23,7 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const experienceId = formData.get("id")?.toString();
 
-  const { run: deleteExperience } = useDeleteExperienceQuery();
+  const { deleteExperience } = useExperiences();
 
   switch (formData.get("action")) {
     case "deleteExperience":
@@ -36,8 +35,10 @@ export async function action({ request }: ActionArgs) {
 export async function loader({ params }: LoaderArgs) {
   const { experienceId } = params;
 
+  const { getExperience } = useExperiences();
+
   const experience = experienceId
-    ? await useExperienceQuery().run(experienceId)
+    ? await getExperience(experienceId)
     : undefined;
 
   if (!experience) {

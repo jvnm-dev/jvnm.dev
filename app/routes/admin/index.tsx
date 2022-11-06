@@ -5,14 +5,11 @@ import {
   MetaFunction,
   redirect,
 } from "@remix-run/node";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
-import {
-  useSessionCommitter,
-  verifySession,
-} from "~/application/server/auth/session.server";
 
 import { getAuth } from "~/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
+import { useAuth } from "~/services/authAdapter";
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",
@@ -20,6 +17,7 @@ export let meta: MetaFunction = () => ({
 });
 
 export async function loader({ request }: LoaderArgs) {
+  const { verifySession } = useAuth();
   const loggedIn = await verifySession(request);
 
   if (loggedIn) {
@@ -30,9 +28,11 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export async function action({ request }: ActionArgs) {
+  const { commitSession } = useAuth();
+
   const data = await request.formData();
   const user = JSON.parse(data.get("user") as string);
-  return useSessionCommitter(request, user);
+  return commitSession(request, user);
 }
 
 const Admin = () => {

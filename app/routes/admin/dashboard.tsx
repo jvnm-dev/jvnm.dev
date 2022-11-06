@@ -6,8 +6,7 @@ import {
   redirect,
 } from "@remix-run/node";
 
-import { useLogoutQuery } from "~/services/api/queries/auth";
-import { useSessionChecker } from "~/application/server/auth/session.server";
+import { useAuth } from "~/services/authAdapter";
 
 import Sider from "~/ui/components/admin/Sider";
 
@@ -18,17 +17,18 @@ export let meta: MetaFunction = () => ({
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
-
-  const { run: logout } = useLogoutQuery(request);
+  const { destroySession } = useAuth();
 
   switch (formData.get("action")) {
     case "logout":
-      return await logout();
+      return await destroySession(request);
   }
 }
 
 export async function loader({ request }: LoaderArgs) {
-  const session = await useSessionChecker(request);
+  const { checkSession } = useAuth();
+
+  const session = await checkSession(request);
 
   if (session.status === 302) {
     return session;

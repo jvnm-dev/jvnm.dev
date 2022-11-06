@@ -1,14 +1,13 @@
-import { FaPaperPlane } from "react-icons/fa";
 import { Form } from "@remix-run/react";
+import { FaPaperPlane } from "react-icons/fa";
+import { ChangeEvent, useState } from "react";
 import { ActionArgs, MetaFunction } from "@remix-run/node";
 
-import { useExperiencesQuery } from "~/services/api/queries/experiences";
-import { useAddExperienceQuery } from "~/services/api/mutations/experience";
+import { useExperiences } from "~/services/experienceAdapter";
 
 import { Typography } from "~/ui/components/common/Typography";
 
 import { toBase64 } from "~/lib/file";
-import { ChangeEvent, useState } from "react";
 
 export let meta: MetaFunction = () => ({
   title: "Jason Van Malder",
@@ -18,7 +17,7 @@ export let meta: MetaFunction = () => ({
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
 
-  const { run: addExperience } = useAddExperienceQuery();
+  const { addExperience } = useExperiences();
 
   switch (formData.get("action")) {
     case "addExperience":
@@ -27,7 +26,9 @@ export async function action({ request }: ActionArgs) {
 }
 
 export async function loader() {
-  const experiences = await useExperiencesQuery().run();
+  const { getExperiences } = useExperiences();
+
+  const experiences = await getExperiences();
 
   return { experiences };
 }

@@ -8,7 +8,7 @@ import { Header } from "~/ui/components/common/Header";
 import { Footer } from "~/ui/components/common/Footer";
 import { AboutScreen } from "~/ui/screens/AboutScreen";
 
-import { useExperiencesQuery } from "~/services/api/queries/experiences";
+import { useExperiences } from "~/services/experienceAdapter";
 import { useSortExperiences } from "~/application/client/experiences/sortExperiences";
 
 type LoaderData = {
@@ -20,9 +20,13 @@ export let meta: MetaFunction = () => ({
   description: "25yo, software engineer and student by night.",
 });
 
-export let loader: LoaderFunction = async (): Promise<LoaderData> => ({
-  experiences: await useExperiencesQuery().run(),
-});
+export let loader: LoaderFunction = async (): Promise<LoaderData> => {
+  const { getExperiences } = useExperiences();
+
+  return {
+    experiences: await getExperiences(),
+  };
+};
 
 const About = () => {
   const { sortExperiences } = useSortExperiences();

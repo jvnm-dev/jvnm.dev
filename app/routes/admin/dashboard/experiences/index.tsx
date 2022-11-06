@@ -7,10 +7,13 @@ import { Typography } from "~/ui/components/common/Typography";
 
 import { Experience } from "~/domain/experience";
 
-import { useExperiencesQuery } from "~/services/api/queries/experiences";
+import { useExperiences } from "~/services/experienceAdapter";
 
 export async function loader() {
-  const experiences = await useExperiencesQuery().run();
+  const { getExperiences } = useExperiences();
+
+  const experiences = await getExperiences();
+
   return { experiences };
 }
 

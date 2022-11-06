@@ -1,12 +1,19 @@
-import { redirect, Response } from "@remix-run/node";
+import { redirect, Response, TypedResponse } from "@remix-run/node";
 import { signInWithCustomToken } from "firebase/auth";
 
 import { auth } from "~/firebase.server";
 import { getAuth } from "~/firebase";
-import { commitSession, getSession } from "~/services/cookies/auth";
 
-export const verifySession = async (request: Request) => {
-  const session = await getSession(request.headers.get("Cookie"));
+import cache from "~/lib/cache";
+
+import {
+  getSession as getSessionCookie,
+  commitSession as commitSessionCookie,
+  destroySession as destroySessionCookie,
+} from "~/services/cookies/auth";
+
+const verifySession = async (request: Request) => {
+  const session = await getSessionCookie(request.headers.get("Cookie"));
 
   if (session.data.session_token) {
     try {
@@ -26,8 +33,8 @@ export const verifySession = async (request: Request) => {
   return false;
 };
 
-export const useSessionChecker = async (request: Request) => {
-  const session = await getSession(request.headers.get("Cookie"));
+const checkSession = async (request: Request) => {
+  const session = await getSessionCookie(request.headers.get("Cookie"));
   const loggedIn = await verifySession(request);
 
   if (loggedIn) {
@@ -39,9 +46,9 @@ export const useSessionChecker = async (request: Request) => {
   return redirect("/admin");
 };
 
-export const useSessionCommitter = async (request: Request, user: any) => {
+const commitSession = async (request: Request, user: any) => {
   if (user && user.uid === process.env.BOSS_UID) {
-    const session = await getSession(request.headers.get("Cookie"));
+    const session = await getSessionCookie(request.headers.get("Cookie"));
 
     const token = user.stsTokenManager.accessToken;
 
@@ -61,12 +68,35 @@ export const useSessionCommitter = async (request: Request, user: any) => {
 
     return redirect("/admin/dashboard/experiences", {
       headers: {
-        "Set-Cookie": await commitSession(session, {
+        "Set-Cookie": await commitSessionCookie(session, {
           expires: new Date(Date.now() + 60 * 60 * 24 * 5 * 1000),
         }),
       },
     });
   }
+};
 
-  return {};
+const destroySession = async (
+  request: Request
+): Promise<TypedResponse<never>> => {
+  await (await getAuth()).signOut();
+
+  cache().clear();
+
+  return redirect("/", {
+    headers: {
+      "Set-Cookie": await destroySessionCookie(
+        await getSessionCookie(request.headers.get("Cookie"))
+      ),
+    },
+  });
+};
+
+export const useAuth = () => {
+  return {
+    checkSession,
+    verifySession,
+    commitSession,
+    destroySession,
+  };
 };
