@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
 import { FaPlus, FaSave, FaTrashAlt } from "react-icons/fa";
 
 import {
@@ -19,6 +19,9 @@ export const SprintEstimateScreen = () => {
     SprintEstimation[]
   >([]);
 
+  const namesRefs = useRef<HTMLInputElement[]>([]);
+  const valuesRefs = useRef<HTMLInputElement[]>([]);
+
   const {
     addSprintEstimation,
     updateSprintEstimation,
@@ -34,14 +37,9 @@ export const SprintEstimateScreen = () => {
   }, []);
 
   useEffect(() => {
-    sprintEstimations.forEach((sprintEstimation) => {
-      const nameInput = document.getElementById(
-        `estimation-name-${sprintEstimation.id}`
-      ) as HTMLInputElement;
-
-      const valueInput = document.getElementById(
-        `estimation-value-${sprintEstimation.id}`
-      ) as HTMLInputElement;
+    sprintEstimations.forEach((sprintEstimation, index) => {
+      const nameInput = namesRefs?.current?.[index];
+      const valueInput = valuesRefs?.current?.[index];
 
       if (nameInput) {
         nameInput.value = sprintEstimation.name;
@@ -94,7 +92,7 @@ export const SprintEstimateScreen = () => {
         </div>
 
         <div className="mt-[-10px] bg-white rounded-lg shadow-lg p-4 w-[95%]">
-          {sprintEstimations.map((sprintEstimation) => (
+          {sprintEstimations.map((sprintEstimation, index) => (
             <div
               key={sprintEstimation.id}
               className="mt-4 flex items-center justify-between bg-white rounded-lg shadow-lg p-4"
@@ -103,9 +101,14 @@ export const SprintEstimateScreen = () => {
                 <div className="flex items-center justify-center">
                   <input
                     id={`estimation-name-${sprintEstimation.id}`}
+                    ref={(element) => {
+                      if (element) {
+                        namesRefs.current[index] = element;
+                      }
+                    }}
                     defaultValue={sprintEstimation.name}
-                    onChange={(e) => {
-                      e.target.dataset.dirty = "true";
+                    onChange={() => {
+                      namesRefs.current[index].dataset.dirty = "true";
                     }}
                     onKeyPress={(e) => {
                       if (e.key === "Enter") {
@@ -129,9 +132,14 @@ export const SprintEstimateScreen = () => {
               <div className="flex items-center justify-center">
                 <input
                   id={`estimation-value-${sprintEstimation.id}`}
+                  ref={(element) => {
+                    if (element) {
+                      valuesRefs.current[index] = element;
+                    }
+                  }}
                   defaultValue={sprintEstimation.value}
-                  onChange={(e) => {
-                    e.target.dataset.dirty = "true";
+                  onChange={() => {
+                    valuesRefs.current[index].dataset.dirty = "true";
                   }}
                   className="text-right"
                   onKeyPress={(e) => {
