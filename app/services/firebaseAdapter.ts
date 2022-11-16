@@ -1,10 +1,12 @@
 import {
   doc,
+  onSnapshot,
   collection,
   getDocs,
   addDoc,
   getDoc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import cache from "~/lib/cache";
@@ -42,6 +44,32 @@ const getCollection = async <T>(name: string): Promise<T[]> => {
   return data;
 };
 
+const listenToCollection = async <T>(
+  name: string,
+  callback: (data: T[]) => void
+): Promise<() => void> => {
+  const firestore = getFirestore();
+
+  if (!firestore) {
+    console.error("Firestore is not initialized");
+    return () => {};
+  }
+
+  return onSnapshot(collection(firestore, name), (querySnapshot) => {
+    const data = querySnapshot.docs.map((doc) => {
+      const id = doc.id;
+      const data = doc.data();
+
+      return {
+        id: id,
+        ...data,
+      } as T;
+    });
+
+    callback(data);
+  });
+};
+
 const addDocument = async <T>(name: string, data: T): Promise<T> => {
   const firestore = getFirestore();
 
@@ -50,6 +78,24 @@ const addDocument = async <T>(name: string, data: T): Promise<T> => {
   }
 
   await addDoc(collection(firestore, name), data as Record<string, any>);
+
+  cache().deleteEntry(name);
+
+  return data;
+};
+
+const updateDocument = async <T>(
+  name: string,
+  id: string,
+  data: T
+): Promise<T> => {
+  const firestore = getFirestore();
+
+  if (!firestore) {
+    console.error("Firestore is not initialized");
+  }
+
+  await updateDoc(doc(firestore, name, id), data as Record<string, any>);
 
   cache().deleteEntry(name);
 
@@ -96,4 +142,11 @@ const deleteDocument = async (
   return;
 };
 
-export { getCollection, addDocument, getDocument, deleteDocument };
+export {
+  getCollection,
+  listenToCollection,
+  addDocument,
+  getDocument,
+  deleteDocument,
+  updateDocument,
+};

@@ -7,6 +7,8 @@ interface IOwnProps {
   className?: string;
   style?: React.CSSProperties;
   level?: number;
+  editable?: boolean;
+  onChange?: (value: string) => void;
   children: React.ReactNode;
 }
 

@@ -32,6 +32,7 @@ export async function action({ request }: ActionArgs) {
 
   const data = await request.formData();
   const user = JSON.parse(data.get("user") as string);
+
   return commitSession(request, user);
 }
 

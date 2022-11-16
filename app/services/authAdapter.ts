@@ -6,13 +6,15 @@ import { getAuth } from "~/firebase";
 
 import cache from "~/lib/cache";
 
+import { AuthService } from "~/application/ports";
+
 import {
   getSession as getSessionCookie,
   commitSession as commitSessionCookie,
   destroySession as destroySessionCookie,
 } from "~/services/cookies/auth";
 
-const verifySession = async (request: Request) => {
+const verifySession: AuthService["verifySession"] = async (request) => {
   const session = await getSessionCookie(request.headers.get("Cookie"));
 
   if (session.data.session_token) {
@@ -33,7 +35,7 @@ const verifySession = async (request: Request) => {
   return false;
 };
 
-const checkSession = async (request: Request) => {
+const checkSession: AuthService["checkSession"] = async (request) => {
   const session = await getSessionCookie(request.headers.get("Cookie"));
   const loggedIn = await verifySession(request);
 
@@ -46,7 +48,7 @@ const checkSession = async (request: Request) => {
   return redirect("/admin");
 };
 
-const commitSession = async (request: Request, user: any) => {
+const commitSession: AuthService["commitSession"] = async (request, user) => {
   if (user && user.uid === process.env.BOSS_UID) {
     const session = await getSessionCookie(request.headers.get("Cookie"));
 
@@ -76,8 +78,8 @@ const commitSession = async (request: Request, user: any) => {
   }
 };
 
-const destroySession = async (
-  request: Request
+const destroySession: AuthService["destroySession"] = async (
+  request
 ): Promise<TypedResponse<never>> => {
   await (await getAuth()).signOut();
 
@@ -92,7 +94,7 @@ const destroySession = async (
   });
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthService => {
   return {
     checkSession,
     verifySession,

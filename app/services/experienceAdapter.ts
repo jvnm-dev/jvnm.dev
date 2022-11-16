@@ -1,4 +1,5 @@
-import { redirect, TypedResponse } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
+import { ExperienceService } from "~/application/ports";
 import { Experience, ExperiencesKey } from "~/domain/experience";
 
 import { serializeFormData } from "~/lib/form";
@@ -10,17 +11,17 @@ import {
   getDocument,
 } from "~/services/firebaseAdapter";
 
-export const getExperiences = async (): Promise<Experience[]> => {
+export const getExperiences: ExperienceService["getExperiences"] = () => {
   return getCollection(ExperiencesKey);
 };
 
-export const getExperience = async (id: string): Promise<Experience> => {
+export const getExperience: ExperienceService["getExperience"] = (id) => {
   return getDocument(ExperiencesKey, id);
 };
 
-export const addExperience = async (
-  formData: FormData
-): Promise<TypedResponse<never>> => {
+export const addExperience: ExperienceService["addExperience"] = async (
+  formData
+) => {
   formData.delete("action");
   const experience = serializeFormData<Experience>(formData);
 
@@ -29,15 +30,15 @@ export const addExperience = async (
   return redirect("/admin/dashboard/experiences");
 };
 
-export const deleteExperience = async (
-  id: string
-): Promise<TypedResponse<never>> => {
+export const deleteExperience: ExperienceService["deleteExperience"] = async (
+  id
+) => {
   await deleteDocument(ExperiencesKey, id);
 
   return redirect("/admin/dashboard/experiences");
 };
 
-export const useExperiences = () => ({
+export const useExperiences = (): ExperienceService => ({
   getExperience,
   addExperience,
   getExperiences,
